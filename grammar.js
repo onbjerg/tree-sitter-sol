@@ -1,5 +1,22 @@
 const PREC = {
   COMMENT: 1,
+  ASSIGN: 0,
+  TERNARY: 1,
+  LOGICAL_OR: 2,
+  LOGICAL_AND: 3,
+  EQUALITY: 4,
+  RELATIONAL: 5,
+  BITWISE_OR: 6,
+  BITWISE_XOR: 7,
+  BITWISE_AND: 8,
+  SHIFT: 9,
+  ADDITIVE: 10,
+  MULTIPLICATIVE: 11,
+  EXPONENTIAL: 12,
+  UNARY: 13,
+  POSTFIX: 14,
+  CALL: 15,
+  MEMBER: 16,
 }
 
 module.exports = grammar({
@@ -11,6 +28,12 @@ module.exports = grammar({
   ],
 
   word: $ => $.identifier,
+
+  conflicts: $ => [
+    [$._primary_expression, $.struct_expression],
+    [$.user_defined_type, $._primary_expression],
+    [$.variable_declaration_tuple],
+  ],
 
   rules: {
     source_file: $ => repeat($._source_element),
@@ -132,7 +155,7 @@ module.exports = grammar({
     ),
 
     // User-defined types (for inheritance and other uses)
-    user_defined_type: $ => dotSep1($.identifier),
+    user_defined_type: $ => prec.left(dotSep1($.identifier)),
 
     // Call arguments (for constructor calls in inheritance)
     call_arguments: $ => seq(
@@ -140,16 +163,6 @@ module.exports = grammar({
       commaSep($._expression),
       ')'
     ),
-
-    // Basic expressions (will expand later)
-    _expression: $ => choice(
-      $.number_literal,
-      $.string_literal,
-      $.identifier
-    ),
-
-    // Number literals (basic for now)
-    number_literal: $ => /\d+/,
 
     // State variables and constants
     state_variable_declaration: $ => seq(
@@ -296,7 +309,7 @@ module.exports = grammar({
 
     function_body: $ => seq(
       '{',
-      // Will add statements later
+      repeat($._statement),
       '}'
     ),
 
@@ -344,6 +357,445 @@ module.exports = grammar({
       $.type_name,
       optional('indexed'),
       optional($.identifier)
+    ),
+
+    // Statements
+    _statement: $ => choice(
+      $.expression_statement,
+      $.variable_declaration_statement,
+      $.if_statement,
+      $.for_statement,
+      $.while_statement,
+      $.do_while_statement,
+      $.return_statement,
+      $.break_statement,
+      $.continue_statement,
+      $.emit_statement,
+      $.revert_statement,
+      $.try_statement,
+      $.block_statement,
+      $.unchecked_block,
+      $.assembly_statement,
+    ),
+
+    expression_statement: $ => seq($._expression, ';'),
+
+    variable_declaration_statement: $ => seq(
+      choice(
+        seq($.variable_declaration, optional(seq('=', $._expression))),
+        seq($.variable_declaration_tuple, '=', $._expression)
+      ),
+      ';'
+    ),
+
+    variable_declaration: $ => seq(
+      $.type_name,
+      optional($.storage_location),
+      $.identifier
+    ),
+
+    variable_declaration_tuple: $ => seq(
+      '(',
+      commaSep(optional($.variable_declaration)),
+      ')'
+    ),
+
+    block_statement: $ => seq(
+      '{',
+      repeat($._statement),
+      '}'
+    ),
+
+    unchecked_block: $ => seq(
+      'unchecked',
+      $.block_statement
+    ),
+
+    if_statement: $ => prec.right(seq(
+      'if',
+      '(',
+      $._expression,
+      ')',
+      $._statement,
+      optional(seq('else', $._statement))
+    )),
+
+    for_statement: $ => seq(
+      'for',
+      '(',
+      choice($.variable_declaration_statement, $.expression_statement, ';'),
+      choice($.expression_statement, ';'),
+      optional($._expression),
+      ')',
+      $._statement
+    ),
+
+    while_statement: $ => seq(
+      'while',
+      '(',
+      $._expression,
+      ')',
+      $._statement
+    ),
+
+    do_while_statement: $ => seq(
+      'do',
+      $._statement,
+      'while',
+      '(',
+      $._expression,
+      ')',
+      ';'
+    ),
+
+    return_statement: $ => seq(
+      'return',
+      optional($._expression),
+      ';'
+    ),
+
+    break_statement: $ => seq('break', ';'),
+    continue_statement: $ => seq('continue', ';'),
+
+    emit_statement: $ => seq(
+      'emit',
+      $.identifier,
+      $.call_arguments,
+      ';'
+    ),
+
+    revert_statement: $ => seq(
+      'revert',
+      optional($._expression),
+      ';'
+    ),
+
+    try_statement: $ => seq(
+      'try',
+      $._expression,
+      optional(seq('returns', $.parameter_list)),
+      $.block_statement,
+      repeat1($.catch_clause)
+    ),
+
+    catch_clause: $ => seq(
+      'catch',
+      optional(seq(optional($.identifier), $.parameter_list)),
+      $.block_statement
+    ),
+
+    assembly_statement: $ => seq(
+      'assembly',
+      optional($.string_literal),
+      $.yul_block
+    ),
+
+    // Yul (inline assembly)
+    yul_block: $ => seq(
+      '{',
+      repeat($._yul_statement),
+      '}'
+    ),
+
+    _yul_statement: $ => choice(
+      $.yul_block,
+      $.yul_variable_declaration,
+      $.yul_assignment,
+      $.yul_function_call,
+      $.yul_if_statement,
+      $.yul_for_statement,
+      $.yul_switch_statement,
+      $.yul_function_definition,
+      $.yul_label,
+      $.yul_break,
+      $.yul_continue,
+      $.yul_leave,
+      $._yul_literal
+    ),
+
+    yul_variable_declaration: $ => seq(
+      'let',
+      $.yul_identifier,
+      optional(seq(':=', $._yul_expression))
+    ),
+
+    yul_assignment: $ => seq(
+      $.yul_identifier,
+      ':=',
+      $._yul_expression
+    ),
+
+    yul_function_call: $ => seq(
+      $.yul_identifier,
+      '(',
+      commaSep($._yul_expression),
+      ')'
+    ),
+
+    yul_if_statement: $ => seq(
+      'if',
+      $._yul_expression,
+      $.yul_block
+    ),
+
+    yul_for_statement: $ => seq(
+      'for',
+      $.yul_block,
+      $._yul_expression,
+      $.yul_block,
+      $.yul_block
+    ),
+
+    yul_switch_statement: $ => seq(
+      'switch',
+      $._yul_expression,
+      choice(
+        seq('default', $.yul_block),
+        seq(
+          repeat1(seq('case', $._yul_literal, $.yul_block)),
+          optional(seq('default', $.yul_block))
+        )
+      )
+    ),
+
+    yul_function_definition: $ => seq(
+      'function',
+      $.yul_identifier,
+      '(',
+      commaSep($.yul_identifier),
+      ')',
+      optional(seq('->', commaSep1($.yul_identifier))),
+      $.yul_block
+    ),
+
+    yul_label: $ => seq($.yul_identifier, ':'),
+    yul_break: $ => 'break',
+    yul_continue: $ => 'continue',
+    yul_leave: $ => 'leave',
+
+    yul_identifier: $ => $.identifier,
+    _yul_expression: $ => choice(
+      $.yul_identifier,
+      $.yul_function_call,
+      $._yul_literal
+    ),
+
+    _yul_literal: $ => choice(
+      $.yul_number_literal,
+      $.yul_string_literal,
+      $.yul_boolean_literal,
+      $.yul_hex_literal
+    ),
+
+    yul_number_literal: $ => /0|([1-9][0-9]*)/,
+    yul_string_literal: $ => $.string_literal,
+    yul_boolean_literal: $ => choice('true', 'false'),
+    yul_hex_literal: $ => /0x[0-9A-Fa-f]*/,
+
+    // Expressions
+    _expression: $ => choice(
+      $.assignment_expression,
+      $.augmented_assignment_expression,
+      $.ternary_expression,
+      $.binary_expression,
+      $.unary_expression,
+      $.update_expression,
+      $.call_expression,
+      $.member_expression,
+      $.array_access,
+      $.slice_access,
+      $.type_cast_expression,
+      $.new_expression,
+      $.struct_expression,
+      $.payable_expression,
+      $.type_expression,
+      $.parenthesized_expression,
+      $.array_literal,
+      $._primary_expression
+    ),
+
+    _primary_expression: $ => choice(
+      $.identifier,
+      $._literal,
+      'this',
+      'super'
+    ),
+
+    assignment_expression: $ => prec.right(PREC.ASSIGN, seq(
+      $._expression,
+      '=',
+      $._expression
+    )),
+
+    augmented_assignment_expression: $ => prec.right(PREC.ASSIGN, seq(
+      $._expression,
+      choice('+=', '-=', '*=', '/=', '%=', '|=', '&=', '^=', '<<=', '>>='),
+      $._expression
+    )),
+
+    ternary_expression: $ => prec.left(PREC.TERNARY, seq(
+      $._expression,
+      '?',
+      $._expression,
+      ':',
+      $._expression
+    )),
+
+    binary_expression: $ => choice(
+      ...[
+        ['||', PREC.LOGICAL_OR],
+        ['&&', PREC.LOGICAL_AND],
+        ['==', PREC.EQUALITY],
+        ['!=', PREC.EQUALITY],
+        ['<', PREC.RELATIONAL],
+        ['<=', PREC.RELATIONAL],
+        ['>', PREC.RELATIONAL],
+        ['>=', PREC.RELATIONAL],
+        ['|', PREC.BITWISE_OR],
+        ['^', PREC.BITWISE_XOR],
+        ['&', PREC.BITWISE_AND],
+        ['<<', PREC.SHIFT],
+        ['>>', PREC.SHIFT],
+        ['+', PREC.ADDITIVE],
+        ['-', PREC.ADDITIVE],
+        ['*', PREC.MULTIPLICATIVE],
+        ['/', PREC.MULTIPLICATIVE],
+        ['%', PREC.MULTIPLICATIVE],
+        ['**', PREC.EXPONENTIAL],
+      ].map(([operator, precedence]) =>
+        prec.left(precedence, seq(
+          $._expression,
+          operator,
+          $._expression
+        ))
+      )
+    ),
+
+    unary_expression: $ => prec.left(PREC.UNARY, seq(
+      choice('!', '~', '-', '+', 'delete'),
+      $._expression
+    )),
+
+    update_expression: $ => choice(
+      prec.left(PREC.POSTFIX, seq($._expression, choice('++', '--'))),
+      prec.right(PREC.UNARY, seq(choice('++', '--'), $._expression))
+    ),
+
+    call_expression: $ => prec.left(PREC.CALL, seq(
+      $._expression,
+      choice(
+        $.call_arguments,
+        seq($.call_options, $.call_arguments)
+      )
+    )),
+
+    call_options: $ => seq(
+      '{',
+      commaSep1($.call_option),
+      '}'
+    ),
+
+    call_option: $ => seq(
+      $.identifier,
+      ':',
+      $._expression
+    ),
+
+    member_expression: $ => prec.left(PREC.MEMBER, seq(
+      $._expression,
+      '.',
+      $.identifier
+    )),
+
+    array_access: $ => prec.left(PREC.MEMBER, seq(
+      $._expression,
+      '[',
+      optional($._expression),
+      ']'
+    )),
+
+    slice_access: $ => prec.left(PREC.MEMBER, seq(
+      $._expression,
+      '[',
+      optional($._expression),
+      ':',
+      optional($._expression),
+      ']'
+    )),
+
+    type_cast_expression: $ => prec.left(PREC.CALL, seq(
+      $.type_name,
+      $.call_arguments
+    )),
+
+    new_expression: $ => prec.left(PREC.CALL, seq(
+      'new',
+      $.type_name,
+      optional($.call_options),
+      optional($.call_arguments)
+    )),
+
+    struct_expression: $ => seq(
+      $.identifier,
+      '{',
+      commaSep($.struct_field_assignment),
+      '}'
+    ),
+
+    struct_field_assignment: $ => seq(
+      $.identifier,
+      ':',
+      $._expression
+    ),
+
+    payable_expression: $ => seq(
+      'payable',
+      $.call_arguments
+    ),
+
+    type_expression: $ => seq(
+      'type',
+      '(',
+      $.type_name,
+      ')'
+    ),
+
+    parenthesized_expression: $ => seq(
+      '(',
+      $._expression,
+      ')'
+    ),
+
+    array_literal: $ => seq(
+      '[',
+      commaSep($._expression),
+      ']'
+    ),
+
+    // Literals
+    _literal: $ => choice(
+      $.boolean_literal,
+      $.number_literal,
+      $.string_literal,
+      $.hex_literal,
+      $.unicode_string_literal
+    ),
+
+    boolean_literal: $ => choice('true', 'false'),
+
+    number_literal: $ => choice(
+      /\d+(\.\d+)?([eE][+-]?\d+)?/,
+      /\.\d+([eE][+-]?\d+)?/
+    ),
+
+    hex_literal: $ => /0x[0-9A-Fa-f]+/,
+
+    unicode_string_literal: $ => seq(
+      'unicode',
+      choice(
+        seq('"', repeat(/[^"\\]|\\.|\\\r?\n/), '"'),
+        seq("'", repeat(/[^'\\]|\\.|\\\r?\n/), "'")
+      )
     ),
 
     // Comments

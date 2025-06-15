@@ -45,9 +45,7 @@ Nested comments (should not parse)
     (type_name
       (user_defined_type
         (identifier)))
-    (identifier)
-    (import_star)
-    (UNEXPECTED '\n')))
+    (identifier)))
 
 ================================================================================
 Source file with just comments

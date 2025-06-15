@@ -1,0 +1,530 @@
+================================================================================
+Expression statement
+================================================================================
+
+contract Test {
+    function test() {
+        x = 5;
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (function_body
+          (expression_statement
+            (assignment_expression
+              (identifier)
+              (number_literal))))))))
+
+================================================================================
+Variable declaration statement
+================================================================================
+
+contract Test {
+    function test() {
+        uint256 x = 10;
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (function_body
+          (variable_declaration_statement
+            (variable_declaration
+              (type_name
+                (primitive_type))
+              (identifier))
+            (number_literal)))))))
+
+================================================================================
+If statement
+================================================================================
+
+contract Test {
+    function test() {
+        if (x > 0) {
+            return true;
+        }
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (function_body
+          (if_statement
+            (binary_expression
+              (identifier)
+              (number_literal))
+            (block_statement
+              (return_statement
+                (boolean_literal)))))))))
+
+================================================================================
+If-else statement
+================================================================================
+
+contract Test {
+    function test() {
+        if (x > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (function_body
+          (if_statement
+            (binary_expression
+              (identifier)
+              (number_literal))
+            (block_statement
+              (return_statement
+                (boolean_literal)))
+            (block_statement
+              (return_statement
+                (boolean_literal)))))))))
+
+================================================================================
+For loop
+================================================================================
+
+contract Test {
+    function test() {
+        for (uint256 i = 0; i < 10; i++) {
+            emit Event(i);
+        }
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (function_body
+          (for_statement
+            (variable_declaration_statement
+              (variable_declaration
+                (type_name
+                  (primitive_type))
+                (identifier))
+              (number_literal))
+            (expression_statement
+              (binary_expression
+                (identifier)
+                (number_literal)))
+            (update_expression
+              (identifier))
+            (block_statement
+              (emit_statement
+                (identifier)
+                (call_arguments
+                  (identifier))))))))))
+
+================================================================================
+While loop
+================================================================================
+
+contract Test {
+    function test() {
+        while (x > 0) {
+            x--;
+        }
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (function_body
+          (while_statement
+            (binary_expression
+              (identifier)
+              (number_literal))
+            (block_statement
+              (expression_statement
+                (update_expression
+                  (identifier))))))))))
+
+================================================================================
+Return statement
+================================================================================
+
+contract Test {
+    function test() returns (uint256) {
+        return 42;
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (return_type_definition
+          (parameter_list
+            (parameter
+              (type_name
+                (primitive_type)))))
+        (function_body
+          (return_statement
+            (number_literal)))))))
+
+================================================================================
+Emit statement
+================================================================================
+
+contract Test {
+    function test() {
+        emit Transfer(from, to, amount);
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (function_body
+          (emit_statement
+            (identifier)
+            (call_arguments
+              (identifier)
+              (identifier)
+              (identifier))))))))
+
+================================================================================
+Try-catch statement
+================================================================================
+
+contract Test {
+    function test() {
+        try external.call() returns (bool success) {
+            return success;
+        } catch Error(string memory reason) {
+            return false;
+        } catch {
+            return false;
+        }
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (function_body
+          (try_statement
+            (call_expression
+              (member_expression
+                (identifier)
+                (identifier))
+              (call_arguments))
+            (parameter_list
+              (parameter
+                (type_name
+                  (primitive_type))
+                (identifier)))
+            (block_statement
+              (return_statement
+                (identifier)))
+            (catch_clause
+              (identifier)
+              (parameter_list
+                (parameter
+                  (type_name
+                    (primitive_type))
+                  (storage_location)
+                  (identifier)))
+              (block_statement
+                (return_statement
+                  (boolean_literal))))
+            (catch_clause
+              (block_statement
+                (return_statement
+                  (boolean_literal))))))))))
+
+================================================================================
+Revert statement
+================================================================================
+
+contract Test {
+    function test() {
+        revert("Custom error");
+        revert CustomError(42);
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (function_body
+          (revert_statement
+            (parenthesized_expression
+              (string_literal)))
+          (revert_statement
+            (call_expression
+              (identifier)
+              (call_arguments
+                (number_literal)))))))))
+
+================================================================================
+Break and continue
+================================================================================
+
+contract Test {
+    function test() {
+        for (uint256 i = 0; i < 10; i++) {
+            if (i == 5) continue;
+            if (i == 8) break;
+        }
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (function_body
+          (for_statement
+            (variable_declaration_statement
+              (variable_declaration
+                (type_name
+                  (primitive_type))
+                (identifier))
+              (number_literal))
+            (expression_statement
+              (binary_expression
+                (identifier)
+                (number_literal)))
+            (update_expression
+              (identifier))
+            (block_statement
+              (if_statement
+                (binary_expression
+                  (identifier)
+                  (number_literal))
+                (continue_statement))
+              (if_statement
+                (binary_expression
+                  (identifier)
+                  (number_literal))
+                (break_statement)))))))))
+
+================================================================================
+Unchecked block
+================================================================================
+
+contract Test {
+    function test() {
+        unchecked {
+            x = y + z;
+        }
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (function_body
+          (unchecked_block
+            (block_statement
+              (expression_statement
+                (assignment_expression
+                  (identifier)
+                  (binary_expression
+                    (identifier)
+                    (identifier)))))))))))
+
+================================================================================
+Do-while loop
+================================================================================
+
+contract Test {
+    function test() {
+        do {
+            x--;
+        } while (x > 0);
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (function_body
+          (do_while_statement
+            (block_statement
+              (expression_statement
+                (update_expression
+                  (identifier))))
+            (binary_expression
+              (identifier)
+              (number_literal))))))))
+
+================================================================================
+Multiple variable declarations
+================================================================================
+
+contract Test {
+    function test() {
+        (uint256 a, uint256 b) = getValues();
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (function_body
+          (variable_declaration_statement
+            (variable_declaration_tuple
+              (variable_declaration
+                (type_name
+                  (primitive_type))
+                (identifier))
+              (variable_declaration
+                (type_name
+                  (primitive_type))
+                (identifier)))
+            (call_expression
+              (identifier)
+              (call_arguments))))))))
+
+================================================================================
+Assembly statement
+================================================================================
+
+contract Test {
+    function test() {
+        assembly {
+            let x := 42
+        }
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (function_body
+          (assembly_statement
+            (yul_block
+              (yul_variable_declaration
+                (yul_identifier)
+                (yul_number_literal)))))))))
+
+================================================================================
+Assembly with memory-safe
+================================================================================
+
+contract Test {
+    function test() {
+        assembly ("memory-safe") {
+            let x := 42
+        }
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (function_body
+          (assembly_statement
+            (string_literal)
+            (yul_block
+              (yul_variable_declaration
+                (yul_identifier)
+                (yul_number_literal)))))))))
