@@ -42,7 +42,9 @@ Nested comments (should not parse)
 (source_file
   (comment)
   (ERROR
-    (identifier)
+    (type_name
+      (user_defined_type
+        (identifier)))
     (identifier)
     (import_star)
     (UNEXPECTED '\n')))

@@ -1,0 +1,193 @@
+================================================================================
+Simple state variable
+================================================================================
+
+contract Test {
+    uint256 public balance;
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (state_variable_declaration
+        (type_name
+          (primitive_type))
+        (visibility)
+        (identifier)))))
+
+================================================================================
+State variable with initialization
+================================================================================
+
+contract Test {
+    uint256 public balance = 100;
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (state_variable_declaration
+        (type_name
+          (primitive_type))
+        (visibility)
+        (identifier)
+        (number_literal)))))
+
+================================================================================
+Constant state variable
+================================================================================
+
+contract Test {
+    uint256 public constant MAX_SUPPLY = 1000000;
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (state_variable_declaration
+        (type_name
+          (primitive_type))
+        (visibility)
+        (state_mutability)
+        (identifier)
+        (number_literal)))))
+
+================================================================================
+Immutable state variable
+================================================================================
+
+contract Test {
+    address public immutable owner;
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (state_variable_declaration
+        (type_name
+          (primitive_type))
+        (visibility)
+        (state_mutability)
+        (identifier)))))
+
+================================================================================
+Multiple modifiers state variable
+================================================================================
+
+contract Test {
+    uint256 private constant immutable MAX_VALUE = 42;
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (state_variable_declaration
+        (type_name
+          (primitive_type))
+        (visibility)
+        (state_mutability)
+        (state_mutability)
+        (identifier)
+        (number_literal)))))
+
+================================================================================
+Transient storage variable
+================================================================================
+
+contract Test {
+    uint256 transient tempValue;
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (state_variable_declaration
+        (type_name
+          (primitive_type))
+        (storage_location)
+        (identifier)))))
+
+================================================================================
+File-level constant
+================================================================================
+
+uint256 constant GLOBAL_CONSTANT = 42;
+
+contract Test {
+}
+
+---
+
+(source_file
+  (constant_variable_declaration
+    (type_name
+      (primitive_type))
+    (identifier)
+    (number_literal))
+  (contract_declaration
+    (identifier)
+    (contract_body)))
+
+================================================================================
+Array state variable
+================================================================================
+
+contract Test {
+    uint256[] public numbers;
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (state_variable_declaration
+        (type_name
+          (array_type
+            (type_name
+              (primitive_type))))
+        (visibility)
+        (identifier)))))
+
+================================================================================
+Mapping state variable
+================================================================================
+
+contract Test {
+    mapping(address => uint256) public balances;
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (state_variable_declaration
+        (type_name
+          (mapping_type
+            (type_name
+              (primitive_type))
+            (type_name
+              (primitive_type))))
+        (visibility)
+        (identifier)))))

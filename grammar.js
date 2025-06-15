@@ -21,6 +21,7 @@ module.exports = grammar({
       $.contract_declaration,
       $.interface_declaration,
       $.library_declaration,
+      $.constant_variable_declaration,
       // More elements will be added as we implement them
     ),
 
@@ -110,8 +111,13 @@ module.exports = grammar({
 
     contract_body: $ => seq(
       '{',
-      // Will add contract members later
+      repeat($._contract_member),
       '}'
+    ),
+
+    _contract_member: $ => choice(
+      $.state_variable_declaration,
+      // More contract members will be added later
     ),
 
     // User-defined types (for inheritance and other uses)
@@ -133,6 +139,85 @@ module.exports = grammar({
 
     // Number literals (basic for now)
     number_literal: $ => /\d+/,
+
+    // State variables and constants
+    state_variable_declaration: $ => seq(
+      $.type_name,
+      repeat(choice(
+        $.visibility,
+        $.state_mutability,
+        $.storage_location
+      )),
+      $.identifier,
+      optional(seq('=', $._expression)),
+      ';'
+    ),
+
+    constant_variable_declaration: $ => seq(
+      $.type_name,
+      'constant',
+      $.identifier,
+      '=',
+      $._expression,
+      ';'
+    ),
+
+    // Type system
+    type_name: $ => choice(
+      $.primitive_type,
+      $.user_defined_type,
+      $.array_type,
+      $.mapping_type
+    ),
+
+    primitive_type: $ => choice(
+      'bool',
+      'string',
+      'address',
+      'bytes',
+      /uint(8|16|24|32|40|48|56|64|72|80|88|96|104|112|120|128|136|144|152|160|168|176|184|192|200|208|216|224|232|240|248|256)?/,
+      /int(8|16|24|32|40|48|56|64|72|80|88|96|104|112|120|128|136|144|152|160|168|176|184|192|200|208|216|224|232|240|248|256)?/,
+      /bytes(1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31|32)/
+    ),
+
+    array_type: $ => seq(
+      $.type_name,
+      '[',
+      optional($._expression),
+      ']'
+    ),
+
+    mapping_type: $ => seq(
+      'mapping',
+      '(',
+      $.type_name,
+      '=>',
+      $.type_name,
+      ')'
+    ),
+
+    // Modifiers and specifiers
+    visibility: $ => choice(
+      'public',
+      'private',
+      'internal',
+      'external'
+    ),
+
+    state_mutability: $ => choice(
+      'constant',
+      'immutable',
+      'pure',
+      'view',
+      'payable'
+    ),
+
+    storage_location: $ => choice(
+      'memory',
+      'storage',
+      'calldata',
+      'transient'
+    ),
 
     // Comments
     comment: $ => token(prec(PREC.COMMENT, choice(
