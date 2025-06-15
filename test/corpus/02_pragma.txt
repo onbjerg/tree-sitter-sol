@@ -1,0 +1,97 @@
+================================================================================
+Simple pragma directive
+================================================================================
+
+pragma solidity ^0.8.0;
+
+---
+
+(source_file
+  (pragma_directive
+    (pragma_token
+      (pragma_name)
+      (pragma_value))))
+
+================================================================================
+Pragma with exact version
+================================================================================
+
+pragma solidity 0.8.19;
+
+---
+
+(source_file
+  (pragma_directive
+    (pragma_token
+      (pragma_name)
+      (pragma_value))))
+
+================================================================================
+Pragma with version range
+================================================================================
+
+pragma solidity >=0.8.0 <0.9.0;
+
+---
+
+(source_file
+  (pragma_directive
+    (pragma_token
+      (pragma_name)
+      (pragma_value))))
+
+================================================================================
+Pragma with OR operator
+================================================================================
+
+pragma solidity ^0.8.0 || ^0.7.0;
+
+---
+
+(source_file
+  (pragma_directive
+    (pragma_token
+      (pragma_name)
+      (pragma_value))))
+
+================================================================================
+Pragma with quoted version
+================================================================================
+
+pragma solidity "0.8.19";
+
+---
+
+(source_file
+  (pragma_directive
+    (pragma_token
+      (pragma_name)
+      (pragma_value))))
+
+================================================================================
+Experimental pragma
+================================================================================
+
+pragma experimental ABIEncoderV2;
+
+---
+
+(source_file
+  (pragma_directive
+    (pragma_token
+      (pragma_name)
+      (pragma_value))))
+
+================================================================================
+Custom pragma
+================================================================================
+
+pragma custom-directive some-value;
+
+---
+
+(source_file
+  (pragma_directive
+    (pragma_token
+      (pragma_name)
+      (pragma_value))))
