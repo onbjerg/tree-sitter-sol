@@ -18,6 +18,9 @@ module.exports = grammar({
     _source_element: $ => choice(
       $.pragma_directive,
       $.import_directive,
+      $.contract_declaration,
+      $.interface_declaration,
+      $.library_declaration,
       // More elements will be added as we implement them
     ),
 
@@ -73,6 +76,64 @@ module.exports = grammar({
       seq("'", repeat(/[^'\\]|\\.|\\\r?\n/), "'")
     ),
 
+    // Contract declarations
+    contract_declaration: $ => seq(
+      optional('abstract'),
+      'contract',
+      $.identifier,
+      repeat($.inheritance_specifier),
+      $.contract_body
+    ),
+
+    interface_declaration: $ => seq(
+      'interface',
+      $.identifier,
+      repeat($.inheritance_specifier),
+      $.contract_body
+    ),
+
+    library_declaration: $ => seq(
+      'library',
+      $.identifier,
+      $.contract_body
+    ),
+
+    inheritance_specifier: $ => seq(
+      'is',
+      commaSep1($.inheritance_type)
+    ),
+
+    inheritance_type: $ => seq(
+      $.user_defined_type,
+      optional($.call_arguments)
+    ),
+
+    contract_body: $ => seq(
+      '{',
+      // Will add contract members later
+      '}'
+    ),
+
+    // User-defined types (for inheritance and other uses)
+    user_defined_type: $ => dotSep1($.identifier),
+
+    // Call arguments (for constructor calls in inheritance)
+    call_arguments: $ => seq(
+      '(',
+      commaSep($._expression),
+      ')'
+    ),
+
+    // Basic expressions (will expand later)
+    _expression: $ => choice(
+      $.number_literal,
+      $.string_literal,
+      $.identifier
+    ),
+
+    // Number literals (basic for now)
+    number_literal: $ => /\d+/,
+
     // Comments
     comment: $ => token(prec(PREC.COMMENT, choice(
       seq('//', /[^\r\n]*/),
@@ -84,11 +145,15 @@ module.exports = grammar({
   }
 });
 
-// Helper function for comma-separated lists
+// Helper functions
 function commaSep(rule) {
   return optional(commaSep1(rule));
 }
 
 function commaSep1(rule) {
   return seq(rule, repeat(seq(',', rule)), optional(','));
+}
+
+function dotSep1(rule) {
+  return seq(rule, repeat(seq('.', rule)));
 }

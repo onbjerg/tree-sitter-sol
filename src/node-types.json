@@ -1,5 +1,56 @@
 [
   {
+    "type": "call_arguments",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "number_literal",
+          "named": true
+        },
+        {
+          "type": "string_literal",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "contract_body",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "contract_declaration",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "contract_body",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "inheritance_specifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "import_alias",
     "named": true,
     "fields": {},
@@ -76,6 +127,82 @@
     }
   },
   {
+    "type": "inheritance_specifier",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "inheritance_type",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "inheritance_type",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "call_arguments",
+          "named": true
+        },
+        {
+          "type": "user_defined_type",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "interface_declaration",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "contract_body",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "inheritance_specifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "library_declaration",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "contract_body",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "pragma_directive",
     "named": true,
     "fields": {},
@@ -126,7 +253,19 @@
       "required": false,
       "types": [
         {
+          "type": "contract_declaration",
+          "named": true
+        },
+        {
           "type": "import_directive",
+          "named": true
+        },
+        {
+          "type": "interface_declaration",
+          "named": true
+        },
+        {
+          "type": "library_declaration",
           "named": true
         },
         {
@@ -142,6 +281,21 @@
     "fields": {}
   },
   {
+    "type": "user_defined_type",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "\"",
     "named": false
   },
@@ -150,11 +304,27 @@
     "named": false
   },
   {
+    "type": "(",
+    "named": false
+  },
+  {
+    "type": ")",
+    "named": false
+  },
+  {
     "type": ",",
     "named": false
   },
   {
+    "type": ".",
+    "named": false
+  },
+  {
     "type": ";",
+    "named": false
+  },
+  {
+    "type": "abstract",
     "named": false
   },
   {
@@ -164,6 +334,10 @@
   {
     "type": "comment",
     "named": true
+  },
+  {
+    "type": "contract",
+    "named": false
   },
   {
     "type": "from",
@@ -179,6 +353,22 @@
   },
   {
     "type": "import_star",
+    "named": true
+  },
+  {
+    "type": "interface",
+    "named": false
+  },
+  {
+    "type": "is",
+    "named": false
+  },
+  {
+    "type": "library",
+    "named": false
+  },
+  {
+    "type": "number_literal",
     "named": true
   },
   {

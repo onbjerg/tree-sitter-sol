@@ -1,0 +1,152 @@
+================================================================================
+Simple contract
+================================================================================
+
+contract SimpleContract {
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body)))
+
+================================================================================
+Abstract contract
+================================================================================
+
+abstract contract AbstractContract {
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body)))
+
+================================================================================
+Contract with single inheritance
+================================================================================
+
+contract Child is Parent {
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (inheritance_specifier
+      (inheritance_type
+        (user_defined_type
+          (identifier))))
+    (contract_body)))
+
+================================================================================
+Contract with multiple inheritance
+================================================================================
+
+contract Child is Parent1, Parent2 {
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (inheritance_specifier
+      (inheritance_type
+        (user_defined_type
+          (identifier)))
+      (inheritance_type
+        (user_defined_type
+          (identifier))))
+    (contract_body)))
+
+================================================================================
+Contract with inheritance arguments
+================================================================================
+
+contract Child is Parent(42, "test") {
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (inheritance_specifier
+      (inheritance_type
+        (user_defined_type
+          (identifier))
+        (call_arguments
+          (number_literal)
+          (string_literal))))
+    (contract_body)))
+
+================================================================================
+Interface declaration
+================================================================================
+
+interface IERC20 {
+}
+
+---
+
+(source_file
+  (interface_declaration
+    (identifier)
+    (contract_body)))
+
+================================================================================
+Interface with inheritance
+================================================================================
+
+interface IERC20Extended is IERC20 {
+}
+
+---
+
+(source_file
+  (interface_declaration
+    (identifier)
+    (inheritance_specifier
+      (inheritance_type
+        (user_defined_type
+          (identifier))))
+    (contract_body)))
+
+================================================================================
+Library declaration
+================================================================================
+
+library SafeMath {
+}
+
+---
+
+(source_file
+  (library_declaration
+    (identifier)
+    (contract_body)))
+
+================================================================================
+Contract with qualified inheritance
+================================================================================
+
+contract Child is contracts.Parent {
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (inheritance_specifier
+      (inheritance_type
+        (user_defined_type
+          (identifier)
+          (identifier))))
+    (contract_body)))
