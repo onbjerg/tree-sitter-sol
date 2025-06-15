@@ -44,7 +44,8 @@ Nested comments (should not parse)
   (ERROR
     (identifier)
     (identifier)
-    (UNEXPECTED '*')))
+    (import_star)
+    (UNEXPECTED '\n')))
 
 ================================================================================
 Source file with just comments

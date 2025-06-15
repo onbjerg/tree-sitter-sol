@@ -1,0 +1,132 @@
+================================================================================
+Simple import
+================================================================================
+
+import "hardhat/console.sol";
+
+---
+
+(source_file
+  (import_directive
+    (string_literal)))
+
+================================================================================
+Import with alias
+================================================================================
+
+import "hardhat/console.sol" as Console;
+
+---
+
+(source_file
+  (import_directive
+    (string_literal)
+    (import_alias
+      (identifier))))
+
+================================================================================
+Import everything with alias
+================================================================================
+
+import * as Helpers from "./helpers.sol";
+
+---
+
+(source_file
+  (import_directive
+    (import_star)
+    (import_alias
+      (identifier))
+    (string_literal)))
+
+================================================================================
+Import specific symbols
+================================================================================
+
+import {SafeMath, Address} from "@openzeppelin/contracts/utils/math/SafeMath.sol";
+
+---
+
+(source_file
+  (import_directive
+    (import_clause
+      (import_name
+        (identifier))
+      (import_name
+        (identifier)))
+    (string_literal)))
+
+================================================================================
+Import with symbol aliases
+================================================================================
+
+import {SafeMath as Math, Address as Addr} from "@openzeppelin/contracts/utils/math/SafeMath.sol";
+
+---
+
+(source_file
+  (import_directive
+    (import_clause
+      (import_name
+        (identifier)
+        (import_alias
+          (identifier)))
+      (import_name
+        (identifier)
+        (import_alias
+          (identifier))))
+    (string_literal)))
+
+================================================================================
+Mixed import with and without aliases
+================================================================================
+
+import {SafeMath, Address as Addr} from "@openzeppelin/contracts/utils/math/SafeMath.sol";
+
+---
+
+(source_file
+  (import_directive
+    (import_clause
+      (import_name
+        (identifier))
+      (import_name
+        (identifier)
+        (import_alias
+          (identifier))))
+    (string_literal)))
+
+================================================================================
+Import single symbol
+================================================================================
+
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
+---
+
+(source_file
+  (import_directive
+    (import_clause
+      (import_name
+        (identifier)))
+    (string_literal)))
+
+================================================================================
+Import with trailing comma
+================================================================================
+
+import {
+    SafeMath,
+    Address,
+} from "@openzeppelin/contracts/utils/math/SafeMath.sol";
+
+---
+
+(source_file
+  (import_directive
+    (import_clause
+      (import_name
+        (identifier))
+      (import_name
+        (identifier)))
+    (string_literal)))

@@ -17,6 +17,7 @@ module.exports = grammar({
 
     _source_element: $ => choice(
       $.pragma_directive,
+      $.import_directive,
       // More elements will be added as we implement them
     ),
 
@@ -35,6 +36,43 @@ module.exports = grammar({
     pragma_name: $ => /[a-zA-Z][a-zA-Z0-9_-]*/,
     pragma_value: $ => /[^;]+/,
 
+    // Import directives
+    import_directive: $ => seq(
+      'import',
+      choice(
+        // Simple import: import "path";
+        $.string_literal,
+        // Import with alias: import "path" as Name;
+        seq($.string_literal, $.import_alias),
+        // Import star: import * as Name from "path";
+        seq($.import_star, $.import_alias, 'from', $.string_literal),
+        // Import clause: import {A, B} from "path";
+        seq($.import_clause, 'from', $.string_literal)
+      ),
+      ';'
+    ),
+
+    import_star: $ => '*',
+
+    import_clause: $ => seq(
+      '{',
+      commaSep($.import_name),
+      '}'
+    ),
+
+    import_name: $ => seq(
+      $.identifier,
+      optional($.import_alias)
+    ),
+
+    import_alias: $ => seq('as', $.identifier),
+
+    // String literals
+    string_literal: $ => choice(
+      seq('"', repeat(/[^"\\]|\\.|\\\r?\n/), '"'),
+      seq("'", repeat(/[^'\\]|\\.|\\\r?\n/), "'")
+    ),
+
     // Comments
     comment: $ => token(prec(PREC.COMMENT, choice(
       seq('//', /[^\r\n]*/),
@@ -45,3 +83,12 @@ module.exports = grammar({
     identifier: $ => /[a-zA-Z_$][a-zA-Z0-9_$]*/,
   }
 });
+
+// Helper function for comma-separated lists
+function commaSep(rule) {
+  return optional(commaSep1(rule));
+}
+
+function commaSep1(rule) {
+  return seq(rule, repeat(seq(',', rule)), optional(','));
+}
