@@ -33,6 +33,7 @@ module.exports = grammar({
     [$._primary_expression, $.struct_expression],
     [$.user_defined_type, $._primary_expression],
     [$.variable_declaration_tuple],
+    [$.call_arguments, $.parenthesized_expression],
   ],
 
   rules: {
@@ -49,6 +50,9 @@ module.exports = grammar({
       $.error_declaration,
       $.event_declaration,
       $.function_definition,
+      $.using_directive,
+      $.struct_declaration,
+      $.enum_declaration,
       // More elements will be added as we implement them
     ),
 
@@ -148,9 +152,13 @@ module.exports = grammar({
       $.constructor_definition,
       $.receive_definition,
       $.fallback_definition,
+      $.modifier_definition,
       $.error_declaration,
       $.event_declaration,
       $.user_defined_value_type,
+      $.using_directive,
+      $.struct_declaration,
+      $.enum_declaration,
       // More contract members will be added later
     ),
 
@@ -170,7 +178,8 @@ module.exports = grammar({
       repeat(choice(
         $.visibility,
         $.state_mutability,
-        $.storage_location
+        $.storage_location,
+        $.override_specifier
       )),
       $.identifier,
       optional(seq('=', $._expression)),
@@ -215,8 +224,10 @@ module.exports = grammar({
       'mapping',
       '(',
       $.type_name,
+      optional($.identifier),
       '=>',
       $.type_name,
+      optional($.identifier),
       ')'
     ),
 
@@ -282,12 +293,23 @@ module.exports = grammar({
 
     fallback_definition: $ => seq(
       'fallback',
-      $.parameter_list,
+      optional($.parameter_list),
       repeat(choice(
         $.visibility,
         $.state_mutability
       )),
       $.function_body
+    ),
+
+    modifier_definition: $ => seq(
+      'modifier',
+      $.identifier,
+      optional($.parameter_list),
+      repeat(choice(
+        $.virtual_specifier,
+        $.override_specifier
+      )),
+      choice($.function_body, ';')
     ),
 
     parameter_list: $ => seq(
@@ -359,6 +381,62 @@ module.exports = grammar({
       optional($.identifier)
     ),
 
+    // Using directives
+    using_directive: $ => seq(
+      'using',
+      choice(
+        $.using_list,
+        $.user_defined_type
+      ),
+      'for',
+      choice($.type_name, '*'),
+      optional('global'),
+      ';'
+    ),
+
+    using_list: $ => seq(
+      '{',
+      commaSep1($.using_function),
+      '}'
+    ),
+
+    using_function: $ => seq(
+      $.identifier,
+      'as',
+      $.operator
+    ),
+
+    operator: $ => choice(
+      '+', '-', '*', '/', '%', '**',
+      '==', '!=', '<', '<=', '>', '>=',
+      '&', '|', '^', '~', '<<', '>>',
+      '&&', '||', '!'
+    ),
+
+    // Struct declarations
+    struct_declaration: $ => seq(
+      'struct',
+      $.identifier,
+      '{',
+      repeat($.struct_member),
+      '}'
+    ),
+
+    struct_member: $ => seq(
+      $.type_name,
+      $.identifier,
+      ';'
+    ),
+
+    // Enum declarations
+    enum_declaration: $ => seq(
+      'enum',
+      $.identifier,
+      '{',
+      commaSep($.identifier),
+      '}'
+    ),
+
     // Statements
     _statement: $ => choice(
       $.expression_statement,
@@ -376,7 +454,10 @@ module.exports = grammar({
       $.block_statement,
       $.unchecked_block,
       $.assembly_statement,
+      $.placeholder_statement,
     ),
+
+    placeholder_statement: $ => seq('_', ';'),
 
     expression_statement: $ => seq($._expression, ';'),
 
@@ -466,7 +547,10 @@ module.exports = grammar({
 
     revert_statement: $ => seq(
       'revert',
-      optional($._expression),
+      optional(choice(
+        $._expression,
+        $.call_arguments
+      )),
       ';'
     ),
 
@@ -486,7 +570,10 @@ module.exports = grammar({
 
     assembly_statement: $ => seq(
       'assembly',
-      optional($.string_literal),
+      optional(choice(
+        $.string_literal,
+        seq('(', $.string_literal, ')')
+      )),
       $.yul_block
     ),
 
@@ -577,8 +664,15 @@ module.exports = grammar({
     _yul_expression: $ => choice(
       $.yul_identifier,
       $.yul_function_call,
+      $.yul_member_access,
       $._yul_literal
     ),
+
+    yul_member_access: $ => prec.left(PREC.MEMBER, seq(
+      $.yul_identifier,
+      '.',
+      $.yul_identifier
+    )),
 
     _yul_literal: $ => choice(
       $.yul_number_literal,
@@ -778,15 +872,23 @@ module.exports = grammar({
       $.number_literal,
       $.string_literal,
       $.hex_literal,
-      $.unicode_string_literal
+      $.unicode_string_literal,
+      $.hex_string_literal
     ),
 
     boolean_literal: $ => choice('true', 'false'),
 
-    number_literal: $ => choice(
-      /\d+(\.\d+)?([eE][+-]?\d+)?/,
-      /\.\d+([eE][+-]?\d+)?/
-    ),
+    number_literal: $ => token(seq(
+      choice(
+        /\d+(\.\d+)?([eE][+-]?\d+)?/,
+        /\.\d+([eE][+-]?\d+)?/
+      ),
+      optional(choice(
+        'wei', 'gwei', 'ether',
+        'seconds', 'minutes', 'hours', 'days', 'weeks', 'years'
+      ))
+    )),
+
 
     hex_literal: $ => /0x[0-9A-Fa-f]+/,
 
@@ -795,6 +897,14 @@ module.exports = grammar({
       choice(
         seq('"', repeat(/[^"\\]|\\.|\\\r?\n/), '"'),
         seq("'", repeat(/[^'\\]|\\.|\\\r?\n/), "'")
+      )
+    ),
+
+    hex_string_literal: $ => seq(
+      'hex',
+      choice(
+        seq('"', /[0-9A-Fa-f]*/, '"'),
+        seq("'", /[0-9A-Fa-f]*/, "'")
       )
     ),
 

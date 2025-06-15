@@ -1,0 +1,277 @@
+================================================================================
+File-level function
+================================================================================
+
+pragma solidity ^0.8.0;
+
+function add(uint256 a, uint256 b) pure returns (uint256) {
+    return a + b;
+}
+
+---
+
+(source_file
+  (pragma_directive
+    (pragma_token
+      (pragma_name)
+      (pragma_value)))
+  (function_definition
+    (identifier)
+    (parameter_list
+      (parameter
+        (type_name
+          (primitive_type))
+        (identifier))
+      (parameter
+        (type_name
+          (primitive_type))
+        (identifier)))
+    (state_mutability)
+    (return_type_definition
+      (parameter_list
+        (parameter
+          (type_name
+            (primitive_type)))))
+    (function_body
+      (return_statement
+        (binary_expression
+          (identifier)
+          (identifier))))))
+
+================================================================================
+Multiple file-level functions
+================================================================================
+
+pragma solidity ^0.8.0;
+
+function equals(address a, address b) pure returns (bool) {
+    return a == b;
+}
+
+function isZero(address addr) pure returns (bool) {
+    return addr == address(0);
+}
+
+---
+
+(source_file
+  (pragma_directive
+    (pragma_token
+      (pragma_name)
+      (pragma_value)))
+  (function_definition
+    (identifier)
+    (parameter_list
+      (parameter
+        (type_name
+          (primitive_type))
+        (identifier))
+      (parameter
+        (type_name
+          (primitive_type))
+        (identifier)))
+    (state_mutability)
+    (return_type_definition
+      (parameter_list
+        (parameter
+          (type_name
+            (primitive_type)))))
+    (function_body
+      (return_statement
+        (binary_expression
+          (identifier)
+          (identifier)))))
+  (function_definition
+    (identifier)
+    (parameter_list
+      (parameter
+        (type_name
+          (primitive_type))
+        (identifier)))
+    (state_mutability)
+    (return_type_definition
+      (parameter_list
+        (parameter
+          (type_name
+            (primitive_type)))))
+    (function_body
+      (return_statement
+        (binary_expression
+          (identifier)
+          (type_cast_expression
+            (type_name
+              (primitive_type))
+            (call_arguments
+              (number_literal))))))))
+
+================================================================================
+Using directive with library
+================================================================================
+
+pragma solidity ^0.8.0;
+
+using SafeMath for uint256;
+
+---
+
+(source_file
+  (pragma_directive
+    (pragma_token
+      (pragma_name)
+      (pragma_value)))
+  (using_directive
+    (user_defined_type
+      (identifier))
+    (type_name
+      (primitive_type))))
+
+================================================================================
+Using directive global
+================================================================================
+
+pragma solidity ^0.8.0;
+
+using SafeMath for uint256 global;
+
+---
+
+(source_file
+  (pragma_directive
+    (pragma_token
+      (pragma_name)
+      (pragma_value)))
+  (using_directive
+    (user_defined_type
+      (identifier))
+    (type_name
+      (primitive_type))))
+
+================================================================================
+Using directive with operators
+================================================================================
+
+pragma solidity ^0.8.0;
+
+using {add as +, sub as -} for uint256 global;
+
+---
+
+(source_file
+  (pragma_directive
+    (pragma_token
+      (pragma_name)
+      (pragma_value)))
+  (using_directive
+    (using_list
+      (using_function
+        (identifier)
+        (operator))
+      (using_function
+        (identifier)
+        (operator)))
+    (type_name
+      (primitive_type))))
+
+================================================================================
+Using directive with complex operators
+================================================================================
+
+pragma solidity ^0.8.0;
+
+using {greaterThan as >, lessThan as <, equals as ==} for Currency global;
+
+---
+
+(source_file
+  (pragma_directive
+    (pragma_token
+      (pragma_name)
+      (pragma_value)))
+  (using_directive
+    (using_list
+      (using_function
+        (identifier)
+        (operator))
+      (using_function
+        (identifier)
+        (operator))
+      (using_function
+        (identifier)
+        (operator)))
+    (type_name
+      (user_defined_type
+        (identifier)))))
+
+================================================================================
+Mixed file-level declarations
+================================================================================
+
+pragma solidity ^0.8.0;
+
+type Currency is address;
+
+using CurrencyLibrary for Currency global;
+
+function isZero(Currency currency) pure returns (bool) {
+    return Currency.unwrap(currency) == address(0);
+}
+
+contract Test {
+    function test() {
+        // contract function
+    }
+}
+
+---
+
+(source_file
+  (pragma_directive
+    (pragma_token
+      (pragma_name)
+      (pragma_value)))
+  (user_defined_value_type
+    (identifier)
+    (type_name
+      (primitive_type)))
+  (using_directive
+    (user_defined_type
+      (identifier))
+    (type_name
+      (user_defined_type
+        (identifier))))
+  (function_definition
+    (identifier)
+    (parameter_list
+      (parameter
+        (type_name
+          (user_defined_type
+            (identifier)))
+        (identifier)))
+    (state_mutability)
+    (return_type_definition
+      (parameter_list
+        (parameter
+          (type_name
+            (primitive_type)))))
+    (function_body
+      (return_statement
+        (binary_expression
+          (call_expression
+            (member_expression
+              (identifier)
+              (identifier))
+            (call_arguments
+              (identifier)))
+          (type_cast_expression
+            (type_name
+              (primitive_type))
+            (call_arguments
+              (number_literal)))))))
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (function_body
+          (comment))))))

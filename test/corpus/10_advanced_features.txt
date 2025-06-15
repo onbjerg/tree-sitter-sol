@@ -1,0 +1,341 @@
+================================================================================
+Function calls with options
+================================================================================
+
+contract Test {
+    function test() {
+        other.method{value: 1 ether, gas: 5000}(param1, param2);
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (function_body
+          (expression_statement
+            (call_expression
+              (member_expression
+                (identifier)
+                (identifier))
+              (call_options
+                (call_option
+                  (identifier)
+                  (number_literal))
+                (call_option
+                  (identifier)
+                  (number_literal)))
+              (call_arguments
+                (identifier)
+                (identifier)))))))))
+
+================================================================================
+Contract creation with options
+================================================================================
+
+contract Test {
+    function test() {
+        MyContract c = new MyContract{salt: bytes32(0), value: msg.value}(param);
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (function_body
+          (variable_declaration_statement
+            (variable_declaration
+              (type_name
+                (user_defined_type
+                  (identifier)))
+              (identifier))
+            (new_expression
+              (type_name
+                (user_defined_type
+                  (identifier)))
+              (call_options
+                (call_option
+                  (identifier)
+                  (type_cast_expression
+                    (type_name
+                      (primitive_type))
+                    (call_arguments
+                      (number_literal))))
+                (call_option
+                  (identifier)
+                  (member_expression
+                    (identifier)
+                    (identifier))))
+              (call_arguments
+                (identifier)))))))))
+
+================================================================================
+Static function calls
+================================================================================
+
+contract Test {
+    function test() {
+        Currency.unwrap(currency);
+        type(IERC20).interfaceId;
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (function_body
+          (expression_statement
+            (call_expression
+              (member_expression
+                (identifier)
+                (identifier))
+              (call_arguments
+                (identifier))))
+          (expression_statement
+            (member_expression
+              (type_expression
+                (type_name
+                  (user_defined_type
+                    (identifier))))
+              (identifier))))))))
+
+================================================================================
+Complex expressions with precedence
+================================================================================
+
+contract Test {
+    function test() {
+        result = a + b * c ** d;
+        condition = x > 0 && y < 100 || z == 42;
+        value = flag ? trueValue : falseValue;
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (function_body
+          (expression_statement
+            (assignment_expression
+              (identifier)
+              (binary_expression
+                (identifier)
+                (binary_expression
+                  (identifier)
+                  (binary_expression
+                    (identifier)
+                    (identifier))))))
+          (expression_statement
+            (assignment_expression
+              (identifier)
+              (binary_expression
+                (binary_expression
+                  (binary_expression
+                    (identifier)
+                    (number_literal))
+                  (binary_expression
+                    (identifier)
+                    (number_literal)))
+                (binary_expression
+                  (identifier)
+                  (number_literal)))))
+          (expression_statement
+            (assignment_expression
+              (identifier)
+              (ternary_expression
+                (identifier)
+                (identifier)
+                (identifier)))))))))
+
+================================================================================
+Array and slice operations
+================================================================================
+
+contract Test {
+    function test() {
+        item = array[index];
+        slice = data[start:end];
+        dynamicSlice = data[start:];
+        prefix = data[:end];
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (function_body
+          (expression_statement
+            (assignment_expression
+              (identifier)
+              (array_access
+                (identifier)
+                (identifier))))
+          (expression_statement
+            (assignment_expression
+              (identifier)
+              (slice_access
+                (identifier)
+                (identifier)
+                (identifier))))
+          (expression_statement
+            (assignment_expression
+              (identifier)
+              (slice_access
+                (identifier)
+                (identifier))))
+          (expression_statement
+            (assignment_expression
+              (identifier)
+              (slice_access
+                (identifier)
+                (identifier)))))))))
+
+================================================================================
+Number literals with units
+================================================================================
+
+contract Test {
+    function test() {
+        uint256 amount = 1 ether;
+        uint256 time = 1 days;
+        uint256 gas = 21000 gwei;
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (function_body
+          (variable_declaration_statement
+            (variable_declaration
+              (type_name
+                (primitive_type))
+              (identifier))
+            (number_literal))
+          (variable_declaration_statement
+            (variable_declaration
+              (type_name
+                (primitive_type))
+              (identifier))
+            (number_literal))
+          (variable_declaration_statement
+            (variable_declaration
+              (type_name
+                (primitive_type))
+              (identifier))
+            (number_literal)))))))
+
+================================================================================
+Unicode and hex strings
+================================================================================
+
+contract Test {
+    function test() {
+        string memory unicode_str = unicode"Hello 🌍";
+        bytes memory hex_data = hex"deadbeef";
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (function_body
+          (variable_declaration_statement
+            (variable_declaration
+              (type_name
+                (primitive_type))
+              (storage_location)
+              (identifier))
+            (unicode_string_literal))
+          (variable_declaration_statement
+            (variable_declaration
+              (type_name
+                (primitive_type))
+              (storage_location)
+              (identifier))
+            (hex_string_literal)))))))
+
+================================================================================
+Mapping with named parameters
+================================================================================
+
+contract Test {
+    mapping(address owner => uint256 balance) public balances;
+    mapping(uint256 id => mapping(address user => bool approved)) public approvals;
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (state_variable_declaration
+        (type_name
+          (mapping_type
+            (type_name
+              (primitive_type))
+            (identifier)
+            (type_name
+              (primitive_type))
+            (identifier)))
+        (visibility)
+        (identifier))
+      (state_variable_declaration
+        (type_name
+          (mapping_type
+            (type_name
+              (primitive_type))
+            (identifier)
+            (type_name
+              (mapping_type
+                (type_name
+                  (primitive_type))
+                (identifier)
+                (type_name
+                  (primitive_type))
+                (identifier)))
+            (identifier)))
+        (visibility)
+        (identifier)))))
