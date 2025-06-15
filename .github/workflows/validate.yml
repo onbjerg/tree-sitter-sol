@@ -1,0 +1,62 @@
+name: Validate Grammar
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install tree-sitter CLI
+      run: npm install -g tree-sitter-cli
+    
+    - name: Generate parser
+      run: tree-sitter generate
+    
+    - name: Install dependencies and build bindings
+      run: npm ci
+    
+    - name: Run tests
+      run: tree-sitter test
+    
+    - name: Test C compilation
+      run: |
+        gcc -c src/parser.c -I src/ -std=c99 -o parser.o
+        echo "Parser compiled successfully"
+  
+  rust-bindings:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Rust
+      uses: dtolnay/rust-toolchain@stable
+    
+    - name: Setup Node.js (for parser generation)
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install tree-sitter CLI
+      run: npm install -g tree-sitter-cli
+    
+    - name: Generate parser
+      run: tree-sitter generate
+    
+    - name: Test Rust bindings
+      run: cargo test
+    
+    - name: Build Rust bindings
+      run: cargo build --release
