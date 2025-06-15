@@ -22,6 +22,10 @@ module.exports = grammar({
       $.interface_declaration,
       $.library_declaration,
       $.constant_variable_declaration,
+      $.user_defined_value_type,
+      $.error_declaration,
+      $.event_declaration,
+      $.function_definition,
       // More elements will be added as we implement them
     ),
 
@@ -121,6 +125,9 @@ module.exports = grammar({
       $.constructor_definition,
       $.receive_definition,
       $.fallback_definition,
+      $.error_declaration,
+      $.event_declaration,
+      $.user_defined_value_type,
       // More contract members will be added later
     ),
 
@@ -236,7 +243,7 @@ module.exports = grammar({
         $.modifier_invocation
       )),
       optional($.return_type_definition),
-      $.function_body
+      choice($.function_body, ';')
     ),
 
     constructor_definition: $ => seq(
@@ -299,6 +306,44 @@ module.exports = grammar({
     modifier_invocation: $ => seq(
       $.identifier,
       optional($.call_arguments)
+    ),
+
+    // User-defined value types
+    user_defined_value_type: $ => seq(
+      'type',
+      $.identifier,
+      'is',
+      $.type_name,
+      ';'
+    ),
+
+    // Error declarations
+    error_declaration: $ => seq(
+      'error',
+      $.identifier,
+      $.parameter_list,
+      ';'
+    ),
+
+    // Event declarations
+    event_declaration: $ => seq(
+      'event',
+      $.identifier,
+      $.event_parameter_list,
+      optional('anonymous'),
+      ';'
+    ),
+
+    event_parameter_list: $ => seq(
+      '(',
+      commaSep($.event_parameter),
+      ')'
+    ),
+
+    event_parameter: $ => seq(
+      $.type_name,
+      optional('indexed'),
+      optional($.identifier)
     ),
 
     // Comments

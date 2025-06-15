@@ -120,6 +120,14 @@
           "named": true
         },
         {
+          "type": "error_declaration",
+          "named": true
+        },
+        {
+          "type": "event_declaration",
+          "named": true
+        },
+        {
           "type": "fallback_definition",
           "named": true
         },
@@ -133,6 +141,10 @@
         },
         {
           "type": "state_variable_declaration",
+          "named": true
+        },
+        {
+          "type": "user_defined_value_type",
           "named": true
         }
       ]
@@ -156,6 +168,78 @@
         },
         {
           "type": "inheritance_specifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "error_declaration",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "parameter_list",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "event_declaration",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "event_parameter_list",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "event_parameter",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "type_name",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "event_parameter_list",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "event_parameter",
           "named": true
         }
       ]
@@ -570,6 +654,18 @@
           "named": true
         },
         {
+          "type": "error_declaration",
+          "named": true
+        },
+        {
+          "type": "event_declaration",
+          "named": true
+        },
+        {
+          "type": "function_definition",
+          "named": true
+        },
+        {
           "type": "import_directive",
           "named": true
         },
@@ -583,6 +679,10 @@
         },
         {
           "type": "pragma_directive",
+          "named": true
+        },
+        {
+          "type": "user_defined_value_type",
           "named": true
         }
       ]
@@ -685,6 +785,25 @@
     }
   },
   {
+    "type": "user_defined_value_type",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "type_name",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "visibility",
     "named": true,
     "fields": {}
@@ -742,6 +861,10 @@
     "named": false
   },
   {
+    "type": "anonymous",
+    "named": false
+  },
+  {
     "type": "as",
     "named": false
   },
@@ -771,6 +894,14 @@
   },
   {
     "type": "contract",
+    "named": false
+  },
+  {
+    "type": "error",
+    "named": false
+  },
+  {
+    "type": "event",
     "named": false
   },
   {
@@ -804,6 +935,10 @@
   {
     "type": "import_star",
     "named": true
+  },
+  {
+    "type": "indexed",
+    "named": false
   },
   {
     "type": "interface",
@@ -883,6 +1018,10 @@
   },
   {
     "type": "transient",
+    "named": false
+  },
+  {
+    "type": "type",
     "named": false
   },
   {
