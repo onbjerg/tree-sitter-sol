@@ -61,7 +61,7 @@ jobs:
         cache: 'npm'
     
     - name: Install tree-sitter CLI
-      run: npm install -g tree-sitter-cli
+      run: npm install -g tree-sitter-cli@0.24.7
     
     - name: Generate parser
       run: tree-sitter generate
