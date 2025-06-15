@@ -118,7 +118,7 @@ jobs:
             const content = fs.readFileSync(file, 'utf8');
             const tree = parser.parse(content);
             
-            if (tree.rootNode.hasError()) {
+            if (tree.rootNode.hasError) {
               failedFiles.push({
                 file: file,
                 error: 'Parse tree contains errors'
