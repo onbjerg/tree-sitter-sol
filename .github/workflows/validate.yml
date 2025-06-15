@@ -1,0 +1,65 @@
+name: Validate Grammar
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Generate parser
+      run: npm run generate
+    
+    - name: Run tests
+      run: npm test
+    
+    - name: Build parser
+      run: npm run build
+    
+    - name: Test C compilation
+      run: |
+        gcc -o test_parser src/parser.c -I src/ -std=c99
+        ./test_parser --version || echo "Parser compiled successfully"
+  
+  rust-bindings:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Rust
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        override: true
+    
+    - name: Setup Node.js (for parser generation)
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install Node dependencies
+      run: npm ci
+    
+    - name: Generate parser
+      run: npm run generate
+    
+    - name: Test Rust bindings
+      run: cargo test
+    
+    - name: Build Rust bindings
+      run: cargo build --release

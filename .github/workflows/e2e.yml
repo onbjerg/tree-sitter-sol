@@ -1,0 +1,168 @@
+name: E2E Testing
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run weekly to catch upstream changes
+    - cron: '0 0 * * 0'
+
+jobs:
+  e2e-test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        repo:
+          - name: "forge-std"
+            url: "https://github.com/foundry-rs/forge-std"
+            commit: "464587138602dd194ed0eb5aab15b4721859d422"
+          - name: "prb-math" 
+            url: "https://github.com/PaulRBerg/prb-math"
+            commit: "b03f814a03558ed5b62f89a57bcc8d720a393f67"
+          - name: "prb-proxy"
+            url: "https://github.com/PaulRBerg/prb-proxy"
+            commit: "e45f5325d4b6003227a6c4bdaefac9453f89de2e"
+          - name: "sablier-v2-core"
+            url: "https://github.com/sablier-labs/v2-core"
+            commit: "43cf7c9d968e61a5a03e9237a71a27165b125414"
+          - name: "solady"
+            url: "https://github.com/Vectorized/solady"
+            commit: "66162801e022c268a2a0f621ac5eb0df4986f6eb"
+          - name: "snekmate"
+            url: "https://github.com/pcaversaccio/snekmate"
+            commit: "df226f4a45e86c8f8c3ff1f9fa3443d260002050"
+          - name: "multicall3"
+            url: "https://github.com/mds1/multicall"
+            commit: "f534fbc9f98386a217eaaf9b29d3d4f6f920d5ec"
+          - name: "solidity-stringutils"
+            url: "https://github.com/Arachnid/solidity-stringutils"
+            commit: "4b2fcc43fa0426e19ce88b1f1ec16f5903a2e461"
+          - name: "lil-web3"
+            url: "https://github.com/m1guelpf/lil-web3"
+            commit: "7346bd28c2586da3b07102d5290175a276949b15"
+          - name: "makerdao-multicall"
+            url: "https://github.com/makerdao/multicall"
+            commit: "103a8a28e4e372d582d6539b30031bda4cd48e21"
+          - name: "guni-lev"
+            url: "https://github.com/hexonaut/guni-lev"
+            commit: "15ee8b4c2d28e553c5cd5ba9a2a274af97563bc4"
+    
+    steps:
+    - name: Checkout tree-sitter-solidity
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Generate parser
+      run: npm run generate
+    
+    - name: Checkout test repository
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ matrix.repo.url }}
+        ref: ${{ matrix.repo.commit }}
+        path: ./test-repo
+        
+    - name: Find Solidity files
+      id: find-files
+      run: |
+        find ./test-repo -name "*.sol" -type f > solidity_files.txt
+        echo "file_count=$(wc -l < solidity_files.txt)" >> $GITHUB_OUTPUT
+        
+    - name: Test parsing
+      run: |
+        echo "Testing ${{ matrix.repo.name }} with ${{ steps.find-files.outputs.file_count }} Solidity files"
+        
+        # Create a simple test script
+        cat > test_parser.js << 'EOF'
+        const Parser = require('tree-sitter');
+        const Solidity = require('./bindings/node');
+        const fs = require('fs');
+        
+        const parser = new Parser();
+        parser.setLanguage(Solidity);
+        
+        const files = fs.readFileSync('solidity_files.txt', 'utf8').trim().split('\n').filter(f => f);
+        let totalFiles = files.length;
+        let successfulFiles = 0;
+        let failedFiles = [];
+        
+        console.log(`Testing ${totalFiles} Solidity files...`);
+        
+        for (const file of files) {
+          try {
+            const content = fs.readFileSync(file, 'utf8');
+            const tree = parser.parse(content);
+            
+            if (tree.rootNode.hasError()) {
+              failedFiles.push({
+                file: file,
+                error: 'Parse tree contains errors'
+              });
+            } else {
+              successfulFiles++;
+            }
+          } catch (error) {
+            failedFiles.push({
+              file: file,
+              error: error.message
+            });
+          }
+        }
+        
+        console.log(`\nResults for ${{ matrix.repo.name }}:`);
+        console.log(`✅ Successfully parsed: ${successfulFiles}/${totalFiles} files`);
+        console.log(`❌ Failed to parse: ${failedFiles.length} files`);
+        
+        if (failedFiles.length > 0) {
+          console.log('\nFailed files:');
+          failedFiles.slice(0, 10).forEach(f => {
+            console.log(`  - ${f.file}: ${f.error}`);
+          });
+          if (failedFiles.length > 10) {
+            console.log(`  ... and ${failedFiles.length - 10} more`);
+          }
+        }
+        
+        const successRate = (successfulFiles / totalFiles * 100).toFixed(1);
+        console.log(`\nSuccess rate: ${successRate}%`);
+        
+        // Set output for GitHub summary
+        const summary = `## ${{ matrix.repo.name }}\n- **Files tested**: ${totalFiles}\n- **Successfully parsed**: ${successfulFiles}\n- **Failed**: ${failedFiles.length}\n- **Success rate**: ${successRate}%\n`;
+        fs.writeFileSync('test_summary.md', summary);
+        
+        // Exit with error if success rate is below 95%
+        if (successRate < 95) {
+          console.error(`❌ Success rate ${successRate}% is below 95% threshold`);
+          process.exit(1);
+        }
+        EOF
+        
+        node test_parser.js
+        
+    - name: Upload test summary
+      if: always()
+      run: |
+        if [ -f test_summary.md ]; then
+          cat test_summary.md >> $GITHUB_STEP_SUMMARY
+        fi
+        
+    - name: Archive failed files info
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: failed-files-${{ matrix.repo.name }}
+        path: |
+          solidity_files.txt
+          test_summary.md
+        retention-days: 30
