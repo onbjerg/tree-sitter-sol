@@ -34,6 +34,11 @@ module.exports = grammar({
     [$.user_defined_type, $._primary_expression],
     [$.variable_declaration_tuple],
     [$.call_arguments, $.parenthesized_expression],
+    [$.user_defined_type, $._primary_expression, $.struct_expression],
+    [$.block_statement, $.struct_expression],
+    [$.variable_declaration_tuple, $._primary_expression],
+    [$.call_arguments, $.tuple_literal],
+    [$.user_defined_type, $.variable_declaration_tuple, $._primary_expression],
   ],
 
   rules: {
@@ -469,6 +474,7 @@ module.exports = grammar({
       ';'
     ),
 
+
     variable_declaration: $ => seq(
       $.type_name,
       optional($.storage_location),
@@ -477,7 +483,7 @@ module.exports = grammar({
 
     variable_declaration_tuple: $ => seq(
       '(',
-      commaSep(optional($.variable_declaration)),
+      commaSep(optional(choice($.variable_declaration, $.identifier))),
       ')'
     ),
 
@@ -705,8 +711,24 @@ module.exports = grammar({
       $.type_expression,
       $.parenthesized_expression,
       $.array_literal,
+      $.tuple_literal,
+      $.parenthesized_type,
       $._primary_expression
     ),
+
+    parenthesized_type: $ => seq(
+      '(',
+      commaSep1($.type_name),
+      ')'
+    ),
+
+    tuple_literal: $ => prec(PREC.CALL + 1, seq(
+      '(',
+      $._expression,
+      repeat1(seq(',', optional($._expression))),
+      optional(','),
+      ')'
+    )),
 
     _primary_expression: $ => choice(
       $.identifier,
@@ -830,7 +852,6 @@ module.exports = grammar({
     )),
 
     struct_expression: $ => seq(
-      $.identifier,
       '{',
       commaSep($.struct_field_assignment),
       '}'
@@ -854,11 +875,11 @@ module.exports = grammar({
       ')'
     ),
 
-    parenthesized_expression: $ => seq(
+    parenthesized_expression: $ => prec(PREC.CALL + 1, seq(
       '(',
       $._expression,
       ')'
-    ),
+    )),
 
     array_literal: $ => seq(
       '[',
@@ -880,8 +901,8 @@ module.exports = grammar({
 
     number_literal: $ => token(seq(
       choice(
-        /\d+(\.\d+)?([eE][+-]?\d+)?/,
-        /\.\d+([eE][+-]?\d+)?/
+        /\d+(_?\d+)*(\.\d+(_?\d+)*)?([eE][+-]?\d+(_?\d+)*)?/,
+        /\.\d+(_?\d+)*([eE][+-]?\d+(_?\d+)*)?/
       ),
       optional(choice(
         'wei', 'gwei', 'ether',

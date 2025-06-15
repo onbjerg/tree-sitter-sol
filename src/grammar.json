@@ -2002,8 +2002,17 @@
                   "type": "CHOICE",
                   "members": [
                     {
-                      "type": "SYMBOL",
-                      "name": "variable_declaration"
+                      "type": "CHOICE",
+                      "members": [
+                        {
+                          "type": "SYMBOL",
+                          "name": "variable_declaration"
+                        },
+                        {
+                          "type": "SYMBOL",
+                          "name": "identifier"
+                        }
+                      ]
                     },
                     {
                       "type": "BLANK"
@@ -2023,8 +2032,17 @@
                         "type": "CHOICE",
                         "members": [
                           {
-                            "type": "SYMBOL",
-                            "name": "variable_declaration"
+                            "type": "CHOICE",
+                            "members": [
+                              {
+                                "type": "SYMBOL",
+                                "name": "variable_declaration"
+                              },
+                              {
+                                "type": "SYMBOL",
+                                "name": "identifier"
+                              }
+                            ]
                           },
                           {
                             "type": "BLANK"
@@ -3126,9 +3144,124 @@
         },
         {
           "type": "SYMBOL",
+          "name": "tuple_literal"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "parenthesized_type"
+        },
+        {
+          "type": "SYMBOL",
           "name": "_primary_expression"
         }
       ]
+    },
+    "parenthesized_type": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "("
+        },
+        {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "type_name"
+            },
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": ","
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "type_name"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ","
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": ")"
+        }
+      ]
+    },
+    "tuple_literal": {
+      "type": "PREC",
+      "value": 16,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "("
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_expression"
+          },
+          {
+            "type": "REPEAT1",
+            "content": {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ","
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "_expression"
+                    },
+                    {
+                      "type": "BLANK"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "STRING",
+                "value": ","
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          },
+          {
+            "type": "STRING",
+            "value": ")"
+          }
+        ]
+      }
     },
     "_primary_expression": {
       "type": "CHOICE",
@@ -4029,10 +4162,6 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "SYMBOL",
-          "name": "identifier"
-        },
-        {
           "type": "STRING",
           "value": "{"
         },
@@ -4139,21 +4268,25 @@
       ]
     },
     "parenthesized_expression": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "("
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_expression"
-        },
-        {
-          "type": "STRING",
-          "value": ")"
-        }
-      ]
+      "type": "PREC",
+      "value": 16,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "("
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_expression"
+          },
+          {
+            "type": "STRING",
+            "value": ")"
+          }
+        ]
+      }
     },
     "array_literal": {
       "type": "SEQ",
@@ -4265,11 +4398,11 @@
             "members": [
               {
                 "type": "PATTERN",
-                "value": "\\d+(\\.\\d+)?([eE][+-]?\\d+)?"
+                "value": "\\d+(_?\\d+)*(\\.\\d+(_?\\d+)*)?([eE][+-]?\\d+(_?\\d+)*)?"
               },
               {
                 "type": "PATTERN",
-                "value": "\\.\\d+([eE][+-]?\\d+)?"
+                "value": "\\.\\d+(_?\\d+)*([eE][+-]?\\d+(_?\\d+)*)?"
               }
             ]
           },
@@ -4503,6 +4636,28 @@
     [
       "call_arguments",
       "parenthesized_expression"
+    ],
+    [
+      "user_defined_type",
+      "_primary_expression",
+      "struct_expression"
+    ],
+    [
+      "block_statement",
+      "struct_expression"
+    ],
+    [
+      "variable_declaration_tuple",
+      "_primary_expression"
+    ],
+    [
+      "call_arguments",
+      "tuple_literal"
+    ],
+    [
+      "user_defined_type",
+      "variable_declaration_tuple",
+      "_primary_expression"
     ]
   ],
   "precedences": [],
