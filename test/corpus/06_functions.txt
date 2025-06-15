@@ -1,0 +1,286 @@
+================================================================================
+Simple function
+================================================================================
+
+contract Test {
+    function simple() {
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (function_body)))))
+
+================================================================================
+Function with parameters
+================================================================================
+
+contract Test {
+    function add(uint256 a, uint256 b) {
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list
+          (parameter
+            (type_name
+              (primitive_type))
+            (identifier))
+          (parameter
+            (type_name
+              (primitive_type))
+            (identifier)))
+        (function_body)))))
+
+================================================================================
+Function with return type
+================================================================================
+
+contract Test {
+    function getValue() returns (uint256) {
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (return_type_definition
+          (parameter_list
+            (parameter
+              (type_name
+                (primitive_type)))))
+        (function_body)))))
+
+================================================================================
+Function with visibility and mutability
+================================================================================
+
+contract Test {
+    function getValue() public view returns (uint256) {
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (visibility)
+        (state_mutability)
+        (return_type_definition
+          (parameter_list
+            (parameter
+              (type_name
+                (primitive_type)))))
+        (function_body)))))
+
+================================================================================
+External payable function
+================================================================================
+
+contract Test {
+    function deposit() external payable {
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (visibility)
+        (state_mutability)
+        (function_body)))))
+
+================================================================================
+Constructor
+================================================================================
+
+contract Test {
+    constructor(address _owner) {
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (constructor_definition
+        (parameter_list
+          (parameter
+            (type_name
+              (primitive_type))
+            (identifier)))
+        (function_body)))))
+
+================================================================================
+Constructor with modifiers
+================================================================================
+
+contract Test {
+    constructor(address _owner) Ownable(_owner) {
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (constructor_definition
+        (parameter_list
+          (parameter
+            (type_name
+              (primitive_type))
+            (identifier)))
+        (modifier_invocation
+          (identifier)
+          (call_arguments
+            (identifier)))
+        (function_body)))))
+
+================================================================================
+Function with modifier
+================================================================================
+
+contract Test {
+    function withdraw() onlyOwner {
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (modifier_invocation
+          (identifier))
+        (function_body)))))
+
+================================================================================
+Virtual function
+================================================================================
+
+contract Test {
+    function calculate() virtual returns (uint256) {
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (virtual_specifier)
+        (return_type_definition
+          (parameter_list
+            (parameter
+              (type_name
+                (primitive_type)))))
+        (function_body)))))
+
+================================================================================
+Override function
+================================================================================
+
+contract Test {
+    function calculate() override returns (uint256) {
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (override_specifier)
+        (return_type_definition
+          (parameter_list
+            (parameter
+              (type_name
+                (primitive_type)))))
+        (function_body)))))
+
+================================================================================
+Receive function
+================================================================================
+
+contract Test {
+    receive() external payable {
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (receive_definition
+        (parameter_list)
+        (visibility)
+        (state_mutability)
+        (function_body)))))
+
+================================================================================
+Fallback function
+================================================================================
+
+contract Test {
+    fallback() external {
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (fallback_definition
+        (parameter_list)
+        (visibility)
+        (function_body)))))

@@ -117,6 +117,10 @@ module.exports = grammar({
 
     _contract_member: $ => choice(
       $.state_variable_declaration,
+      $.function_definition,
+      $.constructor_definition,
+      $.receive_definition,
+      $.fallback_definition,
       // More contract members will be added later
     ),
 
@@ -217,6 +221,84 @@ module.exports = grammar({
       'storage',
       'calldata',
       'transient'
+    ),
+
+    // Function definitions
+    function_definition: $ => seq(
+      'function',
+      $.identifier,
+      $.parameter_list,
+      repeat(choice(
+        $.visibility,
+        $.state_mutability,
+        $.virtual_specifier,
+        $.override_specifier,
+        $.modifier_invocation
+      )),
+      optional($.return_type_definition),
+      $.function_body
+    ),
+
+    constructor_definition: $ => seq(
+      'constructor',
+      $.parameter_list,
+      repeat(choice(
+        $.visibility,
+        $.state_mutability,
+        $.modifier_invocation
+      )),
+      $.function_body
+    ),
+
+    receive_definition: $ => seq(
+      'receive',
+      $.parameter_list,
+      repeat(choice(
+        $.visibility,
+        $.state_mutability
+      )),
+      $.function_body
+    ),
+
+    fallback_definition: $ => seq(
+      'fallback',
+      $.parameter_list,
+      repeat(choice(
+        $.visibility,
+        $.state_mutability
+      )),
+      $.function_body
+    ),
+
+    parameter_list: $ => seq(
+      '(',
+      commaSep($.parameter),
+      ')'
+    ),
+
+    parameter: $ => seq(
+      $.type_name,
+      optional($.storage_location),
+      optional($.identifier)
+    ),
+
+    return_type_definition: $ => seq(
+      'returns',
+      $.parameter_list
+    ),
+
+    function_body: $ => seq(
+      '{',
+      // Will add statements later
+      '}'
+    ),
+
+    virtual_specifier: $ => 'virtual',
+    override_specifier: $ => 'override',
+
+    modifier_invocation: $ => seq(
+      $.identifier,
+      optional($.call_arguments)
     ),
 
     // Comments
