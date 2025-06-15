@@ -1,1 +1,0 @@
-cmd_Release/tree_sitter_solidity_binding.node := c++ -bundle -undefined dynamic_lookup -Wl,-search_paths_first -mmacosx-version-min=11.0 -arch arm64 -L./Release -stdlib=libc++  -o Release/tree_sitter_solidity_binding.node Release/obj.target/tree_sitter_solidity_binding/bindings/node/binding.o Release/obj.target/tree_sitter_solidity_binding/src/parser.o 
