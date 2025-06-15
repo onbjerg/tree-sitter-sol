@@ -30,13 +30,9 @@ module.exports = grammar({
   word: $ => $.identifier,
 
   conflicts: $ => [
-    [$._primary_expression, $.struct_expression],
     [$.user_defined_type, $._primary_expression],
     [$.variable_declaration_tuple],
-    [$.call_arguments, $.parenthesized_expression],
-    [$.user_defined_type, $._primary_expression, $.struct_expression],
     [$.block_statement, $.struct_expression],
-    [$.variable_declaration_tuple, $._primary_expression],
     [$.call_arguments, $.tuple_literal],
     [$.user_defined_type, $.variable_declaration_tuple, $._primary_expression],
   ],
