@@ -44,6 +44,7 @@ module.exports = grammar({
     [$.user_defined_type, $._primary_expression, $.struct_expression],
     [$.array_type, $.array_access],
     [$.variable_declaration_statement, $.expression_statement],
+    [$.user_defined_type, $._primary_expression, $.member_expression],
   ],
 
   rules: {
@@ -173,7 +174,7 @@ module.exports = grammar({
     ),
 
     // User-defined types (for inheritance and other uses)  
-    user_defined_type: $ => prec.left(-2, dotSep1($.identifier)),
+    user_defined_type: $ => dotSep1($.identifier),
 
     // Call arguments (for constructor calls in inheritance)
     call_arguments: $ => seq(

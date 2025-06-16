@@ -101,11 +101,9 @@ contract Test {
               (type_name
                 (primitive_type))
               (identifier))
-            (assignment_expression
+            (array_access
               (identifier)
-              (array_access
-                (identifier)
-                (number_literal)))))))))
+              (number_literal))))))))
 
 ================================================================================
 Array access with member expressions
@@ -165,11 +163,10 @@ contract Test {
           (expression_statement
             (assignment_expression
               (member_expression
-                (array_access
+                object: (array_access
                   (identifier)
                   (number_literal))
                 property: (identifier))
               (call_expression
                 function: (identifier)
-                arguments: (call_arguments
-                  (identifier))))))))))
+                arguments: (call_arguments)))))))))
