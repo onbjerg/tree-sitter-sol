@@ -35,8 +35,6 @@ module.exports = grammar({
     [$.block_statement, $.struct_literal],
     [$.call_arguments, $.tuple_literal],
     [$.user_defined_type, $.variable_declaration_tuple, $._primary_expression],
-    [$.type_cast_expression, $.call_expression],
-    [$.type_cast_expression, $.struct_expression],
     [$.call_expression, $.struct_expression],
     [$.parenthesized_expression, $.parenthesized_type],
     [$.variable_declaration_tuple, $._primary_expression],
@@ -717,7 +715,6 @@ module.exports = grammar({
       $.parenthesized_expression,
       $.array_literal,
       $.tuple_literal,
-      $.type_cast_expression,
       $.parenthesized_type,
       $._primary_expression
     ),
@@ -805,14 +802,14 @@ module.exports = grammar({
       prec.right(PREC.UNARY, seq(choice('++', '--'), $._expression))
     ),
 
-    call_expression: $ => prec.dynamic(1, prec.right(PREC.CALL, seq(
+    call_expression: $ => prec.left(PREC.CALL, seq(
       field("function", $._expression),
       choice(
-        $.call_arguments,
-        $.call_options,
-        seq($.call_options, $.call_arguments)
+        field("arguments", $.call_arguments),
+        seq(field("options", $.call_options), field("arguments", $.call_arguments)),
+        field("options", $.call_options)
       )
-    ))),
+    )),
 
     call_options: $ => seq(
       '{',
@@ -851,10 +848,6 @@ module.exports = grammar({
       ']'
     )),
 
-    type_cast_expression: $ => prec.dynamic(2, prec.left(PREC.CALL + 2, seq(
-      $.type_name,
-      $.call_arguments
-    ))),
 
     new_expression: $ => prec.left(PREC.CALL + 1, seq(
       'new',
