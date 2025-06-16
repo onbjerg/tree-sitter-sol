@@ -314,14 +314,14 @@ contract Test {
             (assignment_expression
               (identifier)
               (call_expression
-                (identifier)
+                (primitive_type)
                 (call_arguments
                   (identifier)))))
           (expression_statement
             (assignment_expression
               (identifier)
               (call_expression
-                (identifier)
+                (primitive_type)
                 (call_arguments
                   (identifier)))))
           (expression_statement
@@ -537,7 +537,7 @@ contract Test {
               (identifier))
             (array_literal
               (call_expression
-                (identifier)
+                (primitive_type)
                 (call_arguments
                   (number_literal)))
               (number_literal)
@@ -720,7 +720,7 @@ contract Test {
                 (primitive_type))
               (identifier))
             (call_expression
-              (identifier)
+              (primitive_type)
               (call_arguments
                 (identifier))))
           (variable_declaration_statement
@@ -730,7 +730,7 @@ contract Test {
               (identifier))
             (parenthesized_expression
               (call_expression
-                (identifier)
+                (primitive_type)
                 (call_arguments
                   (identifier)))))
           (variable_declaration_statement
@@ -741,7 +741,7 @@ contract Test {
             (parenthesized_expression
               (binary_expression
                 (call_expression
-                  (identifier)
+                  (primitive_type)
                   (call_arguments
                     (identifier)))
                 (hex_literal))))
@@ -753,7 +753,7 @@ contract Test {
             (parenthesized_expression
               (binary_expression
                 (call_expression
-                  (identifier)
+                  (primitive_type)
                   (call_arguments
                     (identifier)))
                 (number_literal)))))))))
