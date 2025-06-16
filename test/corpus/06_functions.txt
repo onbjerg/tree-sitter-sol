@@ -328,3 +328,90 @@ contract Test {
         (state_mutability)
         (override_specifier)
         (function_body)))))
+
+================================================================================
+Override function with single parent
+================================================================================
+
+contract Test {
+    function calculate() override(Base) returns (uint256) {
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (override_specifier
+          (user_defined_type
+            (identifier)))
+        (return_type_definition
+          (parameter_list
+            (parameter
+              (type_name
+                (primitive_type)))))
+        (function_body)))))
+
+================================================================================
+Override function with multiple parents
+================================================================================
+
+contract Test {
+    function calculate() override(Base1, Base2) returns (uint256) {
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (override_specifier
+          (user_defined_type
+            (identifier))
+          (user_defined_type
+            (identifier)))
+        (return_type_definition
+          (parameter_list
+            (parameter
+              (type_name
+                (primitive_type)))))
+        (function_body)))))
+
+================================================================================
+Override function with qualified parent name
+================================================================================
+
+contract Test {
+    function calculate() override(Math.Base) returns (uint256) {
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (override_specifier
+          (user_defined_type
+            (identifier)
+            (identifier)))
+        (return_type_definition
+          (parameter_list
+            (parameter
+              (type_name
+                (primitive_type)))))
+        (function_body)))))

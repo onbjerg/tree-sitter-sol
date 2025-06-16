@@ -343,6 +343,7 @@ contract Test {
         string memory s = "hello";
         bytes32 h = 0x1234;
         address a = 0x742d35Cc6634C0532925a3b8D5c4Bd9e;
+        address large = 0x5Af0D9827E0c53E4799BB226655A1de152A425a5;
     }
 }
 
@@ -375,6 +376,12 @@ contract Test {
               (storage_location)
               (identifier))
             (string_literal))
+          (variable_declaration_statement
+            (variable_declaration
+              (type_name
+                (primitive_type))
+              (identifier))
+            (hex_literal))
           (variable_declaration_statement
             (variable_declaration
               (type_name
@@ -590,6 +597,54 @@ contract Test {
                   (user_defined_type
                     (identifier))))
               (identifier))))))))
+
+================================================================================
+Address literals
+================================================================================
+
+contract Test {
+    function test() {
+        address short = 0x123;
+        address mixed = 0xaBcDeF0123456789;
+        address full = 0x5Af0D9827E0c53E4799BB226655A1de152A425a5;
+        address max = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF;
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (function_body
+          (variable_declaration_statement
+            (variable_declaration
+              (type_name
+                (primitive_type))
+              (identifier))
+            (hex_literal))
+          (variable_declaration_statement
+            (variable_declaration
+              (type_name
+                (primitive_type))
+              (identifier))
+            (hex_literal))
+          (variable_declaration_statement
+            (variable_declaration
+              (type_name
+                (primitive_type))
+              (identifier))
+            (hex_literal))
+          (variable_declaration_statement
+            (variable_declaration
+              (type_name
+                (primitive_type))
+              (identifier))
+            (hex_literal)))))))
 
 ================================================================================
 Parenthesized expressions

@@ -350,7 +350,14 @@ module.exports = grammar({
     ),
 
     virtual_specifier: $ => 'virtual',
-    override_specifier: $ => 'override',
+    override_specifier: $ => seq(
+      'override',
+      optional(seq(
+        '(',
+        commaSep1($.user_defined_type),
+        ')'
+      ))
+    ),
 
     modifier_invocation: $ => seq(
       $.identifier,
