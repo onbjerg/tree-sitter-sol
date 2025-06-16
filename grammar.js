@@ -720,10 +720,10 @@ module.exports = grammar({
       $._primary_expression
     ),
 
-    parenthesized_type: $ => prec(-1, seq(
+    parenthesized_type: $ => prec(0, seq(
       '(',
       $.type_name,
-      repeat1(seq(',', $.type_name)),
+      repeat(seq(',', $.type_name)),
       optional(','),
       ')'
     )),
@@ -889,7 +889,7 @@ module.exports = grammar({
       ')'
     ),
 
-    parenthesized_expression: $ => prec(PREC.CALL + 1, seq(
+    parenthesized_expression: $ => prec(PREC.CALL + 2, seq(
       '(',
       $._expression,
       ')'
