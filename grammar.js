@@ -47,6 +47,7 @@ module.exports = grammar({
     [$.user_defined_type, $._primary_expression, $.member_expression],
     [$.yul_variable_declaration],
     [$.function_type],
+    [$.type_name, $._primary_expression],
   ],
 
   rules: {
@@ -782,7 +783,8 @@ module.exports = grammar({
       $.identifier,
       $._literal,
       'this',
-      'super'
+      'super',
+      $.primitive_type
     ),
 
     assignment_expression: $ => prec.right(PREC.ASSIGN, seq(
