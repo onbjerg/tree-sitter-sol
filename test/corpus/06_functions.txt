@@ -415,3 +415,36 @@ contract Test {
               (type_name
                 (primitive_type)))))
         (function_body)))))
+
+================================================================================
+Fallback function with parameters and return type
+================================================================================
+
+contract Test {
+    fallback(bytes calldata data) external payable returns (bytes memory response) {
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (fallback_definition
+        (parameter_list
+          (parameter
+            (type_name
+              (primitive_type))
+            (storage_location)
+            (identifier)))
+        (visibility)
+        (state_mutability)
+        (return_type_definition
+          (parameter_list
+            (parameter
+              (type_name
+                (primitive_type))
+              (storage_location)
+              (identifier))))
+        (function_body)))))

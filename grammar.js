@@ -313,6 +313,7 @@ module.exports = grammar({
         $.virtual_specifier,
         $.override_specifier
       )),
+      optional($.return_type_definition),
       $.function_body
     ),
 
@@ -570,7 +571,10 @@ module.exports = grammar({
 
     revert_statement: $ => seq(
       'revert',
-      optional($._expression),
+      optional(choice(
+        $._expression,
+        seq('(', ')')
+      )),
       ';'
     ),
 
