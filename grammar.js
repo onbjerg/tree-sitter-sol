@@ -805,8 +805,8 @@ module.exports = grammar({
     call_expression: $ => prec.left(PREC.CALL, seq(
       field("function", $._expression),
       choice(
-        field("arguments", $.call_arguments),
         seq(field("options", $.call_options), field("arguments", $.call_arguments)),
+        field("arguments", $.call_arguments),
         field("options", $.call_options)
       )
     )),

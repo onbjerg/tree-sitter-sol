@@ -98,9 +98,8 @@ function isZero(address addr) pure returns (bool) {
       (return_statement
         (binary_expression
           (identifier)
-          (type_cast_expression
-            (type_name
-              (primitive_type))
+          (call_expression
+            (identifier)
             (call_arguments
               (number_literal))))))))
 
@@ -262,9 +261,8 @@ contract Test {
               (identifier))
             (call_arguments
               (identifier)))
-          (type_cast_expression
-            (type_name
-              (primitive_type))
+          (call_expression
+            (identifier)
             (call_arguments
               (number_literal)))))))
   (contract_declaration
