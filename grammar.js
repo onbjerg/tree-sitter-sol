@@ -46,6 +46,7 @@ module.exports = grammar({
     [$.variable_declaration_statement, $.expression_statement],
     [$.user_defined_type, $._primary_expression, $.member_expression],
     [$.yul_variable_declaration],
+    [$.function_type],
   ],
 
   rules: {
@@ -212,7 +213,8 @@ module.exports = grammar({
       $.primitive_type,
       prec(2, $.user_defined_type),
       $.array_type,
-      prec(50, $.mapping_type)
+      prec(50, $.mapping_type),
+      $.function_type
     ),
 
     primitive_type: $ => choice(
@@ -242,6 +244,22 @@ module.exports = grammar({
       $.type_name,
       optional($.identifier),
       ')'
+    ),
+
+    function_type: $ => seq(
+      'function',
+      $.parameter_list,
+      repeat(choice(
+        $.visibility,
+        $.function_mutability
+      )),
+      optional($.return_type_definition)
+    ),
+
+    function_mutability: $ => choice(
+      'pure',
+      'view',
+      'payable'
     ),
 
     // Modifiers and specifiers
