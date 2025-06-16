@@ -419,14 +419,19 @@ module.exports = grammar({
 
     using_list: $ => seq(
       '{',
-      commaSep1($.using_function),
+      commaSep1(choice($.using_function, $.using_function_name)),
       '}'
     ),
 
     using_function: $ => seq(
-      $.identifier,
+      choice($.identifier, $.member_expression),
       'as',
       $.operator
+    ),
+
+    using_function_name: $ => choice(
+      $.identifier,
+      $.member_expression
     ),
 
     operator: $ => choice(

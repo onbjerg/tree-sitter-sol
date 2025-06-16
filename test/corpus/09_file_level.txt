@@ -342,3 +342,164 @@ contract Test {
         (parameter_list)
         (function_body
           (comment))))))
+
+================================================================================
+Using directive with qualified function names
+================================================================================
+
+pragma solidity ^0.8.0;
+
+using {
+    Casting.intoSD59x18,
+    Casting.intoUD60x18,
+    Casting.intoUint128,
+    Casting.intoUint256,
+    Casting.intoUint40,
+    unwrap
+} for SD1x18 global;
+
+---
+
+(source_file
+  (pragma_directive
+    (pragma_token
+      (pragma_name)
+      (pragma_value)))
+  (using_directive
+    (using_list
+      (using_function_name
+        (member_expression
+          (identifier)
+          (identifier)))
+      (using_function_name
+        (member_expression
+          (identifier)
+          (identifier)))
+      (using_function_name
+        (member_expression
+          (identifier)
+          (identifier)))
+      (using_function_name
+        (member_expression
+          (identifier)
+          (identifier)))
+      (using_function_name
+        (member_expression
+          (identifier)
+          (identifier)))
+      (using_function_name
+        (identifier)))
+    (type_name
+      (user_defined_type
+        (identifier)))))
+
+================================================================================
+Using directive with mixed qualified and unqualified functions
+================================================================================
+
+pragma solidity ^0.8.0;
+
+using {
+    Library.functionA,
+    functionB,
+    AnotherLib.methodC
+} for MyType;
+
+---
+
+(source_file
+  (pragma_directive
+    (pragma_token
+      (pragma_name)
+      (pragma_value)))
+  (using_directive
+    (using_list
+      (using_function_name
+        (member_expression
+          (identifier)
+          (identifier)))
+      (using_function_name
+        (identifier))
+      (using_function_name
+        (member_expression
+          (identifier)
+          (identifier))))
+    (type_name
+      (user_defined_type
+        (identifier)))))
+
+================================================================================
+Using directive with deeply qualified function names
+================================================================================
+
+pragma solidity ^0.8.0;
+
+using {
+    Math.Operations.add,
+    Utils.Conversion.toString
+} for uint256 global;
+
+---
+
+(source_file
+  (pragma_directive
+    (pragma_token
+      (pragma_name)
+      (pragma_value)))
+  (using_directive
+    (using_list
+      (using_function_name
+        (member_expression
+          (member_expression
+            (identifier)
+            (identifier))
+          (identifier)))
+      (using_function_name
+        (member_expression
+          (member_expression
+            (identifier)
+            (identifier))
+          (identifier))))
+    (type_name
+      (primitive_type))))
+
+================================================================================
+Using directive with operators and qualified functions mixed
+================================================================================
+
+pragma solidity ^0.8.0;
+
+using {
+    add as +,
+    Library.subtract as -,
+    Library.multiply,
+    equals as ==
+} for Currency global;
+
+---
+
+(source_file
+  (pragma_directive
+    (pragma_token
+      (pragma_name)
+      (pragma_value)))
+  (using_directive
+    (using_list
+      (using_function
+        (identifier)
+        (operator))
+      (using_function
+        (member_expression
+          (identifier)
+          (identifier))
+        (operator))
+      (using_function_name
+        (member_expression
+          (identifier)
+          (identifier)))
+      (using_function
+        (identifier)
+        (operator)))
+    (type_name
+      (user_defined_type
+        (identifier)))))
