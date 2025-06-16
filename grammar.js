@@ -481,10 +481,17 @@ module.exports = grammar({
     ),
 
 
-    variable_declaration: $ => seq(
-      $.type_name,
-      optional($.storage_location),
-      $.identifier
+    variable_declaration: $ => choice(
+      prec(3, seq(
+        $.array_type,
+        $.storage_location,
+        $.identifier
+      )),
+      seq(
+        $.type_name,
+        optional($.storage_location),
+        $.identifier
+      )
     ),
 
     variable_declaration_tuple: $ => seq(
