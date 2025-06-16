@@ -31,22 +31,52 @@ jobs:
       run: tree-sitter test
 
   test-bindings:
-    name: Test all bindings
-    runs-on: ${{matrix.os}}
+    name: Test ${{ matrix.binding }} bindings on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-14]
+        include:
+          - os: ubuntu-latest
+            binding: rust
+          - os: ubuntu-latest
+            binding: node
+          - os: ubuntu-latest
+            binding: python
+          - os: ubuntu-latest
+            binding: go
+          - os: ubuntu-latest
+            binding: swift
+          - os: windows-latest
+            binding: rust
+          - os: windows-latest
+            binding: node
+          - os: windows-latest
+            binding: python
+          - os: windows-latest
+            binding: go
+          - os: windows-latest
+            binding: swift
+          - os: macos-14
+            binding: rust
+          - os: macos-14
+            binding: node
+          - os: macos-14
+            binding: python
+          - os: macos-14
+            binding: go
+          - os: macos-14
+            binding: swift
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
       - name: Set up tree-sitter
         uses: tree-sitter/setup-action/cli@v2
-      - name: Run binding tests
+      - name: Run ${{ matrix.binding }} binding tests
         uses: tree-sitter/parser-test-action@v2
         with:
-          test-rust: true
-          test-node: true
-          test-python: true
-          test-go: true
-          test-swift: true
+          test-rust: ${{ matrix.binding == 'rust' }}
+          test-node: ${{ matrix.binding == 'node' }}
+          test-python: ${{ matrix.binding == 'python' }}
+          test-go: ${{ matrix.binding == 'go' }}
+          test-swift: ${{ matrix.binding == 'swift' }}
