@@ -1,0 +1,175 @@
+================================================================================
+Array type declarations with user-defined types
+================================================================================
+
+pragma solidity >=0.5.0;
+
+contract Test {
+    function test() public {
+        Call[] memory _calls;
+        uint256[] memory _numbers;
+        address[] storage _addresses;
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pragma_directive
+    (pragma_token
+      name: (pragma_name)
+      value: (pragma_value)))
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (visibility)
+        (function_body
+          (variable_declaration_statement
+            (variable_declaration
+              (type_name
+                (array_type
+                  (type_name
+                    (user_defined_type
+                      (identifier)))))
+              (storage_location)
+              (identifier)))
+          (variable_declaration_statement
+            (variable_declaration
+              (type_name
+                (array_type
+                  (type_name
+                    (primitive_type))))
+              (storage_location)
+              (identifier)))
+          (variable_declaration_statement
+            (variable_declaration
+              (type_name
+                (array_type
+                  (type_name
+                    (primitive_type))))
+              (storage_location)
+              (identifier))))))))
+
+================================================================================
+Array access expressions
+================================================================================
+
+pragma solidity >=0.5.0;
+
+contract Test {
+    function test() public {
+        uint256[] memory _numbers;
+        _numbers[0] = 42;
+        uint256 x = _numbers[1];
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pragma_directive
+    (pragma_token
+      name: (pragma_name)
+      value: (pragma_value)))
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (visibility)
+        (function_body
+          (variable_declaration_statement
+            (variable_declaration
+              (type_name
+                (array_type
+                  (type_name
+                    (primitive_type))))
+              (storage_location)
+              (identifier)))
+          (expression_statement
+            (assignment_expression
+              (array_access
+                (identifier)
+                (number_literal))
+              (number_literal)))
+          (variable_declaration_statement
+            (variable_declaration
+              (type_name
+                (primitive_type))
+              (identifier))
+            (assignment_expression
+              (identifier)
+              (array_access
+                (identifier)
+                (number_literal)))))))))
+
+================================================================================
+Array access with member expressions
+================================================================================
+
+pragma solidity >=0.5.0;
+
+contract Test {
+    struct Call {
+        address target;
+    }
+    
+    function test() public {
+        Call[] memory _calls = new Call[](1);
+        _calls[0].target = address(this);
+    }
+}
+
+--------------------------------------------------------------------------------
+
+(source_file
+  (pragma_directive
+    (pragma_token
+      name: (pragma_name)
+      value: (pragma_value)))
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (struct_declaration
+        (identifier)
+        (struct_member
+          (type_name
+            (primitive_type))
+          (identifier)))
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (visibility)
+        (function_body
+          (variable_declaration_statement
+            (variable_declaration
+              (type_name
+                (array_type
+                  (type_name
+                    (user_defined_type
+                      (identifier)))))
+              (storage_location)
+              (identifier))
+            (new_expression
+              (type_name
+                (array_type
+                  (type_name
+                    (user_defined_type
+                      (identifier)))))
+              (call_arguments
+                (number_literal))))
+          (expression_statement
+            (assignment_expression
+              (member_expression
+                (array_access
+                  (identifier)
+                  (number_literal))
+                property: (identifier))
+              (call_expression
+                function: (identifier)
+                arguments: (call_arguments
+                  (identifier))))))))))
