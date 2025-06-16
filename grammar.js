@@ -32,9 +32,20 @@ module.exports = grammar({
   conflicts: $ => [
     [$.user_defined_type, $._primary_expression],
     [$.variable_declaration_tuple],
-    [$.block_statement, $.struct_expression],
+    [$.block_statement, $.struct_literal],
     [$.call_arguments, $.tuple_literal],
     [$.user_defined_type, $.variable_declaration_tuple, $._primary_expression],
+    [$.type_cast_expression, $.call_expression],
+    [$.type_cast_expression, $.struct_expression],
+    [$.call_expression, $.struct_expression],
+    [$.parenthesized_expression, $.parenthesized_type],
+    [$.variable_declaration_tuple, $._primary_expression],
+    [$._primary_expression, $.member_expression],
+    [$._primary_expression, $.struct_expression],
+    [$.user_defined_type, $.member_expression],
+    [$.user_defined_type, $._primary_expression, $.struct_expression],
+    [$.array_type, $.array_access],
+    [$.variable_declaration_statement, $.expression_statement],
   ],
 
   rules: {
@@ -163,8 +174,8 @@ module.exports = grammar({
       // More contract members will be added later
     ),
 
-    // User-defined types (for inheritance and other uses)
-    user_defined_type: $ => prec.left(dotSep1($.identifier)),
+    // User-defined types (for inheritance and other uses)  
+    user_defined_type: $ => prec.left(-2, dotSep1($.identifier)),
 
     // Call arguments (for constructor calls in inheritance)
     call_arguments: $ => seq(
@@ -199,14 +210,15 @@ module.exports = grammar({
     // Type system
     type_name: $ => choice(
       $.primitive_type,
-      $.user_defined_type,
+      prec(100, $.user_defined_type),
       $.array_type,
-      $.mapping_type
+      prec(50, $.mapping_type)
     ),
 
     primitive_type: $ => choice(
       'bool',
       'string',
+      prec(1, seq('address', 'payable')),
       'address',
       'bytes',
       /uint(8|16|24|32|40|48|56|64|72|80|88|96|104|112|120|128|136|144|152|160|168|176|184|192|200|208|216|224|232|240|248|256)?/,
@@ -214,12 +226,12 @@ module.exports = grammar({
       /bytes(1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31|32)/
     ),
 
-    array_type: $ => seq(
+    array_type: $ => prec(-1, seq(
       $.type_name,
       '[',
       optional($._expression),
       ']'
-    ),
+    )),
 
     mapping_type: $ => seq(
       'mapping',
@@ -460,7 +472,7 @@ module.exports = grammar({
 
     placeholder_statement: $ => seq('_', ';'),
 
-    expression_statement: $ => seq($._expression, ';'),
+    expression_statement: $ => prec(1, seq($._expression, ';')),
 
     variable_declaration_statement: $ => seq(
       choice(
@@ -549,10 +561,7 @@ module.exports = grammar({
 
     revert_statement: $ => seq(
       'revert',
-      optional(choice(
-        $._expression,
-        $.call_arguments
-      )),
+      optional($._expression),
       ';'
     ),
 
@@ -662,7 +671,7 @@ module.exports = grammar({
     yul_continue: $ => 'continue',
     yul_leave: $ => 'leave',
 
-    yul_identifier: $ => $.identifier,
+    yul_identifier: $ => token(prec(-1, /[a-zA-Z_$][a-zA-Z0-9_$]*/)),
     _yul_expression: $ => choice(
       $.yul_identifier,
       $.yul_function_call,
@@ -696,27 +705,30 @@ module.exports = grammar({
       $.binary_expression,
       $.unary_expression,
       $.update_expression,
+      $.struct_expression,
+      $.struct_literal,
       $.call_expression,
       $.member_expression,
       $.array_access,
       $.slice_access,
-      $.type_cast_expression,
       $.new_expression,
-      $.struct_expression,
       $.payable_expression,
       $.type_expression,
       $.parenthesized_expression,
       $.array_literal,
       $.tuple_literal,
+      $.type_cast_expression,
       $.parenthesized_type,
       $._primary_expression
     ),
 
-    parenthesized_type: $ => seq(
+    parenthesized_type: $ => prec(-1, seq(
       '(',
-      commaSep1($.type_name),
+      $.type_name,
+      repeat1(seq(',', $.type_name)),
+      optional(','),
       ')'
-    ),
+    )),
 
     tuple_literal: $ => prec(PREC.CALL + 1, seq(
       '(',
@@ -793,13 +805,14 @@ module.exports = grammar({
       prec.right(PREC.UNARY, seq(choice('++', '--'), $._expression))
     ),
 
-    call_expression: $ => prec.left(PREC.CALL, seq(
-      $._expression,
+    call_expression: $ => prec.dynamic(1, prec.right(PREC.CALL, seq(
+      field("function", $._expression),
       choice(
         $.call_arguments,
+        $.call_options,
         seq($.call_options, $.call_arguments)
       )
-    )),
+    ))),
 
     call_options: $ => seq(
       '{',
@@ -813,10 +826,13 @@ module.exports = grammar({
       $._expression
     ),
 
-    member_expression: $ => prec.left(PREC.MEMBER, seq(
-      $._expression,
+    member_expression: $ => prec.dynamic(1, seq(
+      field('object', choice(
+        $._expression,
+        $.identifier,
+      )),
       '.',
-      $.identifier
+      field('property', $.identifier)
     )),
 
     array_access: $ => prec.left(PREC.MEMBER, seq(
@@ -835,19 +851,28 @@ module.exports = grammar({
       ']'
     )),
 
-    type_cast_expression: $ => prec.left(PREC.CALL, seq(
+    type_cast_expression: $ => prec.dynamic(2, prec.left(PREC.CALL + 2, seq(
       $.type_name,
       $.call_arguments
-    )),
+    ))),
 
-    new_expression: $ => prec.left(PREC.CALL, seq(
+    new_expression: $ => prec.left(PREC.CALL + 1, seq(
       'new',
       $.type_name,
       optional($.call_options),
-      optional($.call_arguments)
+      $.call_arguments
     )),
 
-    struct_expression: $ => seq(
+    struct_expression: $ => prec.dynamic(1, seq(
+      $.identifier,
+      '(',
+      '{',
+      commaSep($.struct_field_assignment),
+      '}',
+      ')'
+    )),
+
+    struct_literal: $ => seq(
       '{',
       commaSep($.struct_field_assignment),
       '}'
@@ -859,10 +884,10 @@ module.exports = grammar({
       $._expression
     ),
 
-    payable_expression: $ => seq(
+    payable_expression: $ => prec(PREC.CALL + 1, seq(
       'payable',
       $.call_arguments
-    ),
+    )),
 
     type_expression: $ => seq(
       'type',
@@ -895,7 +920,7 @@ module.exports = grammar({
 
     boolean_literal: $ => choice('true', 'false'),
 
-    number_literal: $ => token(seq(
+    number_literal: $ => seq(
       choice(
         /\d+(_?\d+)*(\.\d+(_?\d+)*)?([eE][+-]?\d+(_?\d+)*)?/,
         /\.\d+(_?\d+)*([eE][+-]?\d+(_?\d+)*)?/
@@ -904,7 +929,7 @@ module.exports = grammar({
         'wei', 'gwei', 'ether',
         'seconds', 'minutes', 'hours', 'days', 'weeks', 'years'
       ))
-    )),
+    ),
 
 
     hex_literal: $ => /0x[0-9A-Fa-f]+/,
@@ -927,8 +952,12 @@ module.exports = grammar({
 
     // Comments
     comment: $ => token(prec(PREC.COMMENT, choice(
-      seq('//', /[^\r\n]*/),
-      seq('/*', /[^*]*\*+([^/*][^*]*\*+)*/, '/')
+      seq('//', /.*/),
+      seq(
+        '/*',
+        /[^*]*\*+([^/*][^*]*\*+)*/,
+        '/'
+      )
     ))),
 
     // Identifier (required for word token)

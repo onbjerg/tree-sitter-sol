@@ -335,7 +335,6 @@ contract Test {
                 (identifier)
                 (type_name
                   (primitive_type))
-                (identifier)))
-            (identifier)))
+                (identifier)))))
         (visibility)
         (identifier)))))
