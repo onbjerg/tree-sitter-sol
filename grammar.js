@@ -117,10 +117,10 @@ module.exports = grammar({
     import_alias: $ => seq('as', $.identifier),
 
     // String literals
-    string_literal: $ => choice(
+    string_literal: $ => token(choice(
       seq('"', repeat(/[^"\\]|\\.|\\\r?\n/), '"'),
       seq("'", repeat(/[^'\\]|\\.|\\\r?\n/), "'")
-    ),
+    )),
 
     // Contract declarations
     contract_declaration: $ => seq(
