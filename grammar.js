@@ -308,7 +308,9 @@ module.exports = grammar({
       optional($.parameter_list),
       repeat(choice(
         $.visibility,
-        $.state_mutability
+        $.state_mutability,
+        $.virtual_specifier,
+        $.override_specifier
       )),
       $.function_body
     ),

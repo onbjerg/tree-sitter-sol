@@ -284,3 +284,47 @@ contract Test {
         (parameter_list)
         (visibility)
         (function_body)))))
+
+================================================================================
+Virtual fallback function
+================================================================================
+
+contract Test {
+    fallback() external payable virtual {
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (fallback_definition
+        (parameter_list)
+        (visibility)
+        (state_mutability)
+        (virtual_specifier)
+        (function_body)))))
+
+================================================================================
+Override fallback function
+================================================================================
+
+contract Test {
+    fallback() external payable override {
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (fallback_definition
+        (parameter_list)
+        (visibility)
+        (state_mutability)
+        (override_specifier)
+        (function_body)))))
