@@ -1,0 +1,245 @@
+================================================================================
+Simple function type variable declaration
+================================================================================
+
+contract Test {
+    function test() {
+        function(uint256) internal pure returns (uint256) fn;
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (function_body
+          (variable_declaration_statement
+            (variable_declaration
+              (type_name
+                (function_type
+                  (parameter_list
+                    (parameter
+                      (type_name
+                        (primitive_type))))
+                  (visibility)
+                  (function_mutability)
+                  (return_type_definition
+                    (parameter_list
+                      (parameter
+                        (type_name
+                          (primitive_type)))))))
+              (identifier))))))))
+
+================================================================================
+Function type with memory parameter
+================================================================================
+
+contract Test {
+    function test() {
+        function(bytes memory) internal view returns (uint256) fn;
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (function_body
+          (variable_declaration_statement
+            (variable_declaration
+              (type_name
+                (function_type
+                  (parameter_list
+                    (parameter
+                      (type_name
+                        (primitive_type))
+                      (storage_location)))
+                  (visibility)
+                  (function_mutability)
+                  (return_type_definition
+                    (parameter_list
+                      (parameter
+                        (type_name
+                          (primitive_type)))))))
+              (identifier))))))))
+
+================================================================================
+Function type with multiple parameters
+================================================================================
+
+contract Test {
+    function test() {
+        function(uint256, uint256) internal pure pureFn;
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (function_body
+          (variable_declaration_statement
+            (variable_declaration
+              (type_name
+                (function_type
+                  (parameter_list
+                    (parameter
+                      (type_name
+                        (primitive_type)))
+                    (parameter
+                      (type_name
+                        (primitive_type))))
+                  (visibility)
+                  (function_mutability)))
+              (identifier))))))))
+
+================================================================================
+Function type assignment
+================================================================================
+
+contract Test {
+    function test() {
+        function(uint256) internal view returns (uint256) fnIn = _helper;
+        function(uint256) internal pure returns (uint256) fnOut;
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (function_body
+          (variable_declaration_statement
+            (variable_declaration
+              (type_name
+                (function_type
+                  (parameter_list
+                    (parameter
+                      (type_name
+                        (primitive_type))))
+                  (visibility)
+                  (function_mutability)
+                  (return_type_definition
+                    (parameter_list
+                      (parameter
+                        (type_name
+                          (primitive_type)))))))
+              (identifier))
+            (identifier))
+          (variable_declaration_statement
+            (variable_declaration
+              (type_name
+                (function_type
+                  (parameter_list
+                    (parameter
+                      (type_name
+                        (primitive_type))))
+                  (visibility)
+                  (function_mutability)
+                  (return_type_definition
+                    (parameter_list
+                      (parameter
+                        (type_name
+                          (primitive_type)))))))
+              (identifier))))))))
+
+================================================================================
+Function type in parameter
+================================================================================
+
+contract Test {
+    function castToPure(
+        function(bytes memory) internal view fnIn
+    ) internal pure returns (function(bytes memory) pure fnOut) {
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list
+          (parameter
+            (type_name
+              (function_type
+                (parameter_list
+                  (parameter
+                    (type_name
+                      (primitive_type))
+                    (storage_location)))
+                (visibility)
+                (function_mutability)))
+            (identifier)))
+        (visibility)
+        (function_mutability)
+        (return_type_definition
+          (parameter_list
+            (parameter
+              (type_name
+                (function_type
+                  (parameter_list
+                    (parameter
+                      (type_name
+                        (primitive_type))
+                      (storage_location)))
+                  (function_mutability)))
+              (identifier))))
+        (function_body)))))
+
+================================================================================
+External function type
+================================================================================
+
+contract Test {
+    function test() {
+        function() external payable returns (uint256) externalFn;
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (function_body
+          (variable_declaration_statement
+            (variable_declaration
+              (type_name
+                (function_type
+                  (parameter_list)
+                  (visibility)
+                  (function_mutability)
+                  (return_type_definition
+                    (parameter_list
+                      (parameter
+                        (type_name
+                          (primitive_type)))))))
+              (identifier))))))))
