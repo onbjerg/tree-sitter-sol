@@ -195,7 +195,7 @@ contract Test {
                 (function_mutability)))
             (identifier)))
         (visibility)
-        (function_mutability)
+        (state_mutability)
         (return_type_definition
           (parameter_list
             (parameter
