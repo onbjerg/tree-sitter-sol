@@ -625,7 +625,9 @@ contract Test {
             (assignment_expression
               (identifier)
               (ternary_expression
-                (parenthesized_expression
-                  (identifier))
+                (parenthesized_type
+                  (type_name
+                    (user_defined_type
+                      (identifier))))
                 (identifier)
                 (identifier)))))))))
