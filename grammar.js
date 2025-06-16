@@ -45,6 +45,7 @@ module.exports = grammar({
     [$.array_type, $.array_access],
     [$.variable_declaration_statement, $.expression_statement],
     [$.user_defined_type, $._primary_expression, $.member_expression],
+    [$.yul_variable_declaration],
   ],
 
   rules: {
@@ -621,15 +622,15 @@ module.exports = grammar({
 
     yul_variable_declaration: $ => seq(
       'let',
-      $.yul_identifier,
+      commaSep1($.yul_identifier),
       optional(seq(':=', $._yul_expression))
     ),
 
     yul_assignment: $ => seq(
-      choice(
+      commaSep1(choice(
         $.yul_identifier,
         $.yul_member_access
-      ),
+      )),
       ':=',
       $._yul_expression
     ),
