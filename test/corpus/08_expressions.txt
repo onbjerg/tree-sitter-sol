@@ -529,9 +529,8 @@ contract Test {
               (storage_location)
               (identifier))
             (array_literal
-              (type_cast_expression
-                (type_name
-                  (primitive_type))
+              (call_expression
+                (identifier)
                 (call_arguments
                   (number_literal)))
               (number_literal)

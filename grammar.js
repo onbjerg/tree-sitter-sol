@@ -806,8 +806,7 @@ module.exports = grammar({
       field("function", $._expression),
       choice(
         seq(field("options", $.call_options), field("arguments", $.call_arguments)),
-        field("arguments", $.call_arguments),
-        field("options", $.call_options)
+        field("arguments", $.call_arguments)
       )
     )),
 
