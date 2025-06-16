@@ -29,34 +29,24 @@ jobs:
     
     - name: Run tests
       run: tree-sitter test
-    
-    - name: Test C compilation
-      run: |
-        gcc -c src/parser.c -I src/ -std=c99 -o parser.o
-        echo "Parser compiled successfully"
-  
-  rust-bindings:
-    runs-on: ubuntu-latest
+
+  test-bindings:
+    name: Test all bindings
+    runs-on: ${{matrix.os}}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-14]
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup Rust
-      uses: dtolnay/rust-toolchain@stable
-    
-    - name: Setup Node.js (for parser generation)
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
-    
-    - name: Install tree-sitter CLI
-      run: npm install -g tree-sitter-cli@0.24.7
-    
-    - name: Generate parser
-      run: tree-sitter generate
-    
-    - name: Test Rust bindings
-      run: cargo test
-    
-    - name: Build Rust bindings
-      run: cargo build --release
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up tree-sitter
+        uses: tree-sitter/setup-action/cli@v2
+      - name: Run binding tests
+        uses: tree-sitter/parser-test-action@v2
+        with:
+          test-rust: true
+          test-node: true
+          test-python: true
+          test-go: true
+          test-swift: true
