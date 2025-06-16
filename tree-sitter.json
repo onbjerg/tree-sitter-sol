@@ -17,11 +17,11 @@
     "description": "Solidity grammar for tree-sitter",
     "authors": [
       {
-        "name": "Bjerg"
+        "name": "Oliver Nordbjerg"
       }
     ],
     "links": {
-      "repository": "https://github.com/tree-sitter/tree-sitter-solidity"
+      "repository": "https://github.com/onbjerg/tree-sitter-sol"
     }
   },
   "bindings": {
