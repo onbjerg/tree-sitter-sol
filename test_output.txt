@@ -1,0 +1,159 @@
+
+> tree-sitter-solidity@0.1.0 test
+> tree-sitter test
+
+  01_basics:
+      1. ✓ [32mEmpty source file[0m
+      2. ✓ [32mSingle line comment[0m
+      3. ✓ [32mMulti-line comment[0m
+      4. ✓ [32mNested comments (should not parse)[0m
+      5. ✓ [32mSource file with just comments[0m
+  02_pragma:
+      6. ✓ [32mSimple pragma directive[0m
+      7. ✓ [32mPragma with exact version[0m
+      8. ✓ [32mPragma with version range[0m
+      9. ✓ [32mPragma with OR operator[0m
+     10. ✓ [32mPragma with quoted version[0m
+     11. ✓ [32mExperimental pragma[0m
+     12. ✓ [32mCustom pragma[0m
+  03_imports:
+     13. ✓ [32mSimple import[0m
+     14. ✓ [32mImport with alias[0m
+     15. ✓ [32mImport everything with alias[0m
+     16. ✓ [32mImport specific symbols[0m
+     17. ✓ [32mImport with symbol aliases[0m
+     18. ✓ [32mMixed import with and without aliases[0m
+     19. ✓ [32mImport single symbol[0m
+     20. ✓ [32mImport with trailing comma[0m
+  04_contracts:
+     21. ✓ [32mSimple contract[0m
+     22. ✓ [32mAbstract contract[0m
+     23. ✓ [32mContract with single inheritance[0m
+     24. ✓ [32mContract with multiple inheritance[0m
+     25. ✓ [32mContract with inheritance arguments[0m
+     26. ✓ [32mInterface declaration[0m
+     27. ✓ [32mInterface with inheritance[0m
+     28. ✓ [32mLibrary declaration[0m
+     29. ✓ [32mContract with qualified inheritance[0m
+  05_state_variables:
+     30. ✓ [32mSimple state variable[0m
+     31. ✓ [32mState variable with initialization[0m
+     32. ✓ [32mConstant state variable[0m
+     33. ✓ [32mImmutable state variable[0m
+     34. ✓ [32mMultiple modifiers state variable[0m
+     35. ✓ [32mTransient storage variable[0m
+     36. ✓ [32mFile-level constant[0m
+     37. ✓ [32mArray state variable[0m
+     38. ✓ [32mMapping state variable[0m
+  06_functions:
+     39. ✓ [32mSimple function[0m
+     40. ✓ [32mFunction with parameters[0m
+     41. ✓ [32mFunction with return type[0m
+     42. ✓ [32mFunction with visibility and mutability[0m
+     43. ✓ [32mExternal payable function[0m
+     44. ✓ [32mConstructor[0m
+     45. ✓ [32mConstructor with modifiers[0m
+     46. ✓ [32mFunction with modifier[0m
+     47. ✓ [32mVirtual function[0m
+     48. ✓ [32mOverride function[0m
+     49. ✓ [32mReceive function[0m
+     50. ✓ [32mFallback function[0m
+     51. ✓ [32mVirtual fallback function[0m
+     52. ✓ [32mOverride fallback function[0m
+     53. ✓ [32mOverride function with single parent[0m
+     54. ✓ [32mOverride function with multiple parents[0m
+     55. ✓ [32mOverride function with qualified parent name[0m
+  07_statements:
+     56. ✓ [32mExpression statement[0m
+     57. ✓ [32mVariable declaration statement[0m
+     58. ✓ [32mIf statement[0m
+     59. ✓ [32mIf-else statement[0m
+     60. ✓ [32mFor loop[0m
+     61. ✓ [32mWhile loop[0m
+     62. ✓ [32mReturn statement[0m
+     63. ✓ [32mEmit statement[0m
+     64. ✓ [32mTry-catch statement[0m
+     65. ✓ [32mRevert statement[0m
+     66. ✓ [32mBreak and continue[0m
+     67. ✓ [32mUnchecked block[0m
+     68. ✓ [32mDo-while loop[0m
+     69. ✓ [32mMultiple variable declarations[0m
+     70. ✓ [32mAssembly statement[0m
+     71. ✓ [32mAssembly with memory-safe[0m
+     72. ✗ [31mAssembly with dollar identifier[0m
+     73. ✓ [32mYul multi-variable declaration[0m
+     74. ✓ [32mYul multi-variable assignment[0m
+     75. ✓ [32mYul multi-variable assignment with three variables[0m
+     76. ✓ [32mYul multi-variable assignment in if statement[0m
+     77. ✓ [32mYul mixed single and multi-variable declarations[0m
+  08_expressions:
+     78. ✓ [32mBinary expressions[0m
+     79. ✓ [32mUnary expressions[0m
+     80. ✓ [32mUpdate expressions[0m
+     81. ✓ [32mMember access[0m
+     82. ✓ [32mArray access[0m
+     83. ✓ [32mFunction calls[0m
+     84. ✓ [32mTernary operator[0m
+     85. ✓ [32mType casting[0m
+     86. ✓ [32mLiterals[0m
+     87. ✓ [32mNew expression[0m
+     88. ✓ [32mStruct constructor[0m
+     89. ✓ [32mArray literals[0m
+     90. ✓ [32mPayable and type expressions[0m
+     91. ✓ [32mAddress literals[0m
+     92. ✓ [32mParenthesized expressions[0m
+  09_file_level:
+     93. ✓ [32mFile-level function[0m
+     94. ✓ [32mMultiple file-level functions[0m
+     95. ✓ [32mUsing directive with library[0m
+     96. ✓ [32mUsing directive global[0m
+     97. ✓ [32mUsing directive with operators[0m
+     98. ✓ [32mUsing directive with complex operators[0m
+     99. ✓ [32mMixed file-level declarations[0m
+  10_advanced_features:
+    100. ✓ [32mFunction calls with options[0m
+    101. ✓ [32mContract creation with options[0m
+    102. ✓ [32mStatic function calls[0m
+    103. ✓ [32mComplex expressions with precedence[0m
+    104. ✓ [32mArray and slice operations[0m
+    105. ✓ [32mNumber literals with units[0m
+    106. ✓ [32mUnicode and hex strings[0m
+    107. ✓ [32mMapping with named parameters[0m
+  12_array_types:
+    108. ✓ [32mArray type declarations with user-defined types[0m
+    109. ✓ [32mArray access expressions[0m
+    110. ✓ [32mArray access with member expressions[0m
+
+1 failure:
+
+correct / [32mexpected[0m / [31munexpected[0m
+
+  1. Assembly with dollar identifier:
+
+    (source_file
+      (contract_declaration
+        (identifier)
+        (contract_body
+          (function_definition
+            (identifier)
+            (parameter_list)
+            (function_body
+              (assembly_statement
+                (yul_block
+                  (yul_variable_declaration
+                    (yul_identifier)
+                    (yul_number_literal))
+                  (yul_assignment
+                    (yul_member_access
+                      (yul_identifier)
+                      (yul_identifier))
+                    (yul_member_access
+                      (yul_identifier)
+                      (yul_identifier)))
+                  (yul_assignment
+                    (yul_member_access
+                      (yul_identifier)
+                      (yul_identifier))
+[31m                    (yul_identifier)))))))))[0m
+[32m                    (yul_identifier))))))))[0m
+

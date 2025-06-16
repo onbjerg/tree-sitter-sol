@@ -570,3 +570,190 @@ contract Test {
                   (yul_identifier)
                   (yul_identifier))
                 (yul_identifier)))))))))
+
+================================================================================
+Yul multi-variable declaration
+================================================================================
+
+contract Test {
+    function test() {
+        assembly {
+            let x, y := mmp(eq(118, or(32, byte(0, a))), a)
+        }
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (function_body
+          (assembly_statement
+            (yul_block
+              (yul_variable_declaration
+                (yul_identifier)
+                (yul_identifier)
+                (yul_function_call
+                  (yul_identifier)
+                  (yul_function_call
+                    (yul_identifier)
+                    (yul_number_literal)
+                    (yul_function_call
+                      (yul_identifier)
+                      (yul_number_literal)
+                      (yul_function_call
+                        (yul_identifier)
+                        (yul_number_literal)
+                        (yul_identifier))))
+                  (yul_identifier))))))))))
+
+================================================================================
+Yul multi-variable assignment
+================================================================================
+
+contract Test {
+    function test() {
+        assembly {
+            a, b := swap(a, b)
+        }
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (function_body
+          (assembly_statement
+            (yul_block
+              (yul_assignment
+                (yul_identifier)
+                (yul_identifier)
+                (yul_function_call
+                  (yul_identifier)
+                  (yul_identifier)
+                  (yul_identifier))))))))))
+
+================================================================================
+Yul multi-variable assignment with three variables
+================================================================================
+
+contract Test {
+    function test() {
+        assembly {
+            x, y, z := multiReturn()
+        }
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (function_body
+          (assembly_statement
+            (yul_block
+              (yul_assignment
+                (yul_identifier)
+                (yul_identifier)
+                (yul_identifier)
+                (yul_function_call
+                  (yul_identifier))))))))))
+
+================================================================================
+Yul multi-variable assignment in if statement
+================================================================================
+
+contract Test {
+    function test() {
+        assembly {
+            if iszero(lt(e0_, e1_)) { 
+                e0_, e1_ := swap(e0_, e1_) 
+            }
+        }
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (function_body
+          (assembly_statement
+            (yul_block
+              (yul_if_statement
+                (yul_function_call
+                  (yul_identifier)
+                  (yul_function_call
+                    (yul_identifier)
+                    (yul_identifier)
+                    (yul_identifier)))
+                (yul_block
+                  (yul_assignment
+                    (yul_identifier)
+                    (yul_identifier)
+                    (yul_function_call
+                      (yul_identifier)
+                      (yul_identifier)
+                      (yul_identifier))))))))))))
+
+================================================================================
+Yul mixed single and multi-variable declarations
+================================================================================
+
+contract Test {
+    function test() {
+        assembly {
+            let single := 42
+            let a, b := getTwo()
+            let c := add(a, b)
+        }
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (function_body
+          (assembly_statement
+            (yul_block
+              (yul_variable_declaration
+                (yul_identifier)
+                (yul_number_literal))
+              (yul_variable_declaration
+                (yul_identifier)
+                (yul_identifier)
+                (yul_function_call
+                  (yul_identifier)))
+              (yul_variable_declaration
+                (yul_identifier)
+                (yul_function_call
+                  (yul_identifier)
+                  (yul_identifier)
+                  (yul_identifier))))))))))
