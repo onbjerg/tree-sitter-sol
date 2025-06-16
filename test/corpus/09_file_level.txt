@@ -202,6 +202,75 @@ using {greaterThan as >, lessThan as <, equals as ==} for Currency global;
         (identifier)))))
 
 ================================================================================
+Using directive with star
+================================================================================
+
+pragma solidity ^0.8.0;
+
+using strings for *;
+
+---
+
+(source_file
+  (pragma_directive
+    (pragma_token
+      (pragma_name)
+      (pragma_value)))
+  (using_directive
+    (user_defined_type
+      (identifier))))
+
+================================================================================
+Using directive with star and member call
+================================================================================
+
+pragma solidity ^0.8.0;
+
+contract Test {
+    using strings for *;
+    
+    function test() public {
+        bytes32 data = "hello";
+        uint256 length = data.len();
+    }
+}
+
+---
+
+(source_file
+  (pragma_directive
+    (pragma_token
+      name: (pragma_name)
+      value: (pragma_value)))
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (using_directive
+        (user_defined_type
+          (identifier)))
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (visibility)
+        (function_body
+          (variable_declaration_statement
+            (variable_declaration
+              (type_name
+                (primitive_type))
+              (identifier))
+            (string_literal))
+          (variable_declaration_statement
+            (variable_declaration
+              (type_name
+                (primitive_type))
+              (identifier))
+            (call_expression
+              function: (member_expression
+                object: (identifier)
+                property: (identifier))
+              arguments: (call_arguments))))))))
+
+================================================================================
 Mixed file-level declarations
 ================================================================================
 

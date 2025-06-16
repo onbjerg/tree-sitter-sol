@@ -729,15 +729,17 @@ module.exports = grammar({
       $.parenthesized_expression,
       $.array_literal,
       $.tuple_literal,
-      $.parenthesized_type,
       $._primary_expression
     ),
 
     parenthesized_type: $ => prec(0, seq(
       '(',
-      $.type_name,
-      repeat(seq(',', $.type_name)),
-      optional(','),
+      choice(
+        // Multiple types (tuple type): (uint, string) or (uint, string,)
+        seq($.type_name, ',', commaSep($.type_name), optional(',')),
+        // Single type with trailing comma: (uint,)  
+        seq($.type_name, ',')
+      ),
       ')'
     )),
 

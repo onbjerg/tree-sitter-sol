@@ -680,9 +680,80 @@ contract Test {
             (assignment_expression
               (identifier)
               (ternary_expression
-                (parenthesized_type
-                  (type_name
-                    (user_defined_type
-                      (identifier))))
+                (parenthesized_expression
+                  (identifier))
                 (identifier)
                 (identifier)))))))))
+
+================================================================================
+Parenthesized type casts
+================================================================================
+
+contract Test {
+    function test() {
+        bytes32 x;
+        uint y = uint(x);
+        uint z = (uint(x));
+        uint w = (uint(x) / 0x100);
+        uint v = (uint256(x) + 1);
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (function_body
+          (variable_declaration_statement
+            (variable_declaration
+              (type_name
+                (primitive_type))
+              (identifier)))
+          (variable_declaration_statement
+            (variable_declaration
+              (type_name
+                (primitive_type))
+              (identifier))
+            (call_expression
+              (identifier)
+              (call_arguments
+                (identifier))))
+          (variable_declaration_statement
+            (variable_declaration
+              (type_name
+                (primitive_type))
+              (identifier))
+            (parenthesized_expression
+              (call_expression
+                (identifier)
+                (call_arguments
+                  (identifier)))))
+          (variable_declaration_statement
+            (variable_declaration
+              (type_name
+                (primitive_type))
+              (identifier))
+            (parenthesized_expression
+              (binary_expression
+                (call_expression
+                  (identifier)
+                  (call_arguments
+                    (identifier)))
+                (hex_literal))))
+          (variable_declaration_statement
+            (variable_declaration
+              (type_name
+                (primitive_type))
+              (identifier))
+            (parenthesized_expression
+              (binary_expression
+                (call_expression
+                  (identifier)
+                  (call_arguments
+                    (identifier)))
+                (number_literal)))))))))
