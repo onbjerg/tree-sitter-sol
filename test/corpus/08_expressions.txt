@@ -250,14 +250,13 @@ contract Test {
             (assignment_expression
               (identifier)
               (call_expression
-                (call_expression
-                  (member_expression
+                (member_expression
+                  (identifier)
+                  (identifier))
+                (call_options
+                  (call_option
                     (identifier)
-                    (identifier))
-                  (call_options
-                    (call_option
-                      (identifier)
-                      (number_literal))))
+                    (number_literal)))
                 (call_arguments
                   (identifier))))))))))
 
@@ -314,26 +313,22 @@ contract Test {
           (expression_statement
             (assignment_expression
               (identifier)
-              (type_cast_expression
-                (type_name
-                  (primitive_type))
+              (call_expression
+                (identifier)
                 (call_arguments
                   (identifier)))))
           (expression_statement
             (assignment_expression
               (identifier)
-              (type_cast_expression
-                (type_name
-                  (primitive_type))
+              (call_expression
+                (identifier)
                 (call_arguments
                   (identifier)))))
           (expression_statement
             (assignment_expression
               (identifier)
-              (type_cast_expression
-                (type_name
-                  (user_defined_type
-                    (identifier)))
+              (call_expression
+                (identifier)
                 (call_arguments
                   (identifier))))))))))
 
@@ -534,9 +529,8 @@ contract Test {
               (storage_location)
               (identifier))
             (array_literal
-              (type_cast_expression
-                (type_name
-                  (primitive_type))
+              (call_expression
+                (identifier)
                 (call_arguments
                   (number_literal)))
               (number_literal)

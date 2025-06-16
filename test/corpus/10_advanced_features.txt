@@ -67,9 +67,8 @@ contract Test {
               (call_options
                 (call_option
                   (identifier)
-                  (type_cast_expression
-                    (type_name
-                      (primitive_type))
+                  (call_expression
+                    (identifier)
                     (call_arguments
                       (number_literal))))
                 (call_option
