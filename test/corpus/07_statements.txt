@@ -528,3 +528,45 @@ contract Test {
               (yul_variable_declaration
                 (yul_identifier)
                 (yul_number_literal)))))))))
+
+================================================================================
+Assembly with dollar identifier
+================================================================================
+
+contract Test {
+    function test() {
+        assembly {
+            let $ := 42
+            casted.slot := $.slot
+            $.slot := sSlot
+        }
+    }
+}
+
+---
+
+(source_file
+  (contract_declaration
+    (identifier)
+    (contract_body
+      (function_definition
+        (identifier)
+        (parameter_list)
+        (function_body
+          (assembly_statement
+            (yul_block
+              (yul_variable_declaration
+                (yul_identifier)
+                (yul_number_literal))
+              (yul_assignment
+                (yul_member_access
+                  (yul_identifier)
+                  (yul_identifier))
+                (yul_member_access
+                  (yul_identifier)
+                  (yul_identifier)))
+              (yul_assignment
+                (yul_member_access
+                  (yul_identifier)
+                  (yul_identifier))
+                (yul_identifier)))))))))

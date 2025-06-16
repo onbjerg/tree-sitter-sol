@@ -626,7 +626,10 @@ module.exports = grammar({
     ),
 
     yul_assignment: $ => seq(
-      $.yul_identifier,
+      choice(
+        $.yul_identifier,
+        $.yul_member_access
+      ),
       ':=',
       $._yul_expression
     ),
