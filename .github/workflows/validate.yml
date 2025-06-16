@@ -35,15 +35,31 @@ jobs:
         gcc -c src/parser.c -I src/ -std=c99 -o parser.o
         echo "Parser compiled successfully"
   
-  rust-bindings:
-    runs-on: ubuntu-latest
+  bindings:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            binding: node
+          - os: ubuntu-latest
+            binding: rust
+          - os: macos-latest
+            binding: node
+          - os: macos-latest
+            binding: rust
+          - os: windows-latest
+            binding: node
+          - os: windows-latest
+            binding: rust
+    
+    runs-on: ${{ matrix.os }}
+    name: Test ${{ matrix.binding }} bindings on ${{ matrix.os }}
+    
     steps:
     - uses: actions/checkout@v4
     
-    - name: Setup Rust
-      uses: dtolnay/rust-toolchain@stable
-    
-    - name: Setup Node.js (for parser generation)
+    - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '18'
@@ -55,8 +71,19 @@ jobs:
     - name: Generate parser
       run: tree-sitter generate
     
-    - name: Test Rust bindings
-      run: cargo test
+    - name: Setup Rust
+      if: matrix.binding == 'rust'
+      uses: dtolnay/rust-toolchain@stable
     
-    - name: Build Rust bindings
-      run: cargo build --release
+    - name: Test Node.js bindings
+      if: matrix.binding == 'node'
+      run: |
+        npm ci
+        node -e "const Parser = require('tree-sitter'); const Solidity = require('./bindings/node'); const parser = new Parser(); parser.setLanguage(Solidity); console.log('Node.js bindings loaded successfully');"
+        npm test
+    
+    - name: Test Rust bindings
+      if: matrix.binding == 'rust'
+      run: |
+        cargo test
+        cargo build --release
