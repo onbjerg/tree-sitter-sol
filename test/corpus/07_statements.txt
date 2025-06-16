@@ -306,6 +306,7 @@ contract Test {
     function test() {
         revert("Custom error");
         revert CustomError(42);
+        revert();
     }
 }
 
@@ -326,7 +327,8 @@ contract Test {
             (call_expression
               (identifier)
               (call_arguments
-                (number_literal)))))))))
+                (number_literal))))
+          (revert_statement))))))
 
 ================================================================================
 Break and continue
