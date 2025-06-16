@@ -168,5 +168,5 @@ contract Test {
                   (number_literal))
                 property: (identifier))
               (call_expression
-                function: (identifier)
+                function: (primitive_type)
                 arguments: (call_arguments)))))))))
