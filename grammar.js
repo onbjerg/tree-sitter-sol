@@ -44,6 +44,7 @@ module.exports = grammar({
     [$.user_defined_type, $._primary_expression, $.struct_expression],
     [$.array_type, $.array_access],
     [$.variable_declaration_statement, $.expression_statement],
+    [$.user_defined_type, $._primary_expression, $.member_expression],
   ],
 
   rules: {
@@ -173,7 +174,7 @@ module.exports = grammar({
     ),
 
     // User-defined types (for inheritance and other uses)  
-    user_defined_type: $ => prec.left(-2, dotSep1($.identifier)),
+    user_defined_type: $ => dotSep1($.identifier),
 
     // Call arguments (for constructor calls in inheritance)
     call_arguments: $ => seq(
@@ -208,7 +209,7 @@ module.exports = grammar({
     // Type system
     type_name: $ => choice(
       $.primitive_type,
-      prec(100, $.user_defined_type),
+      prec(2, $.user_defined_type),
       $.array_type,
       prec(50, $.mapping_type)
     ),
@@ -224,7 +225,7 @@ module.exports = grammar({
       /bytes(1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31|32)/
     ),
 
-    array_type: $ => prec(-1, seq(
+    array_type: $ => prec(1, seq(
       $.type_name,
       '[',
       optional($._expression),
@@ -472,13 +473,13 @@ module.exports = grammar({
 
     expression_statement: $ => prec(1, seq($._expression, ';')),
 
-    variable_declaration_statement: $ => seq(
+    variable_declaration_statement: $ => prec(3, seq(
       choice(
         seq($.variable_declaration, optional(seq('=', $._expression))),
         seq($.variable_declaration_tuple, '=', $._expression)
       ),
       ';'
-    ),
+    )),
 
 
     variable_declaration: $ => seq(
